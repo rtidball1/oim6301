@@ -49,6 +49,18 @@ def _():
     return (mo,)
 
 
+@app.cell
+def _():
+    print('hello, world')
+    return
+
+
+@app.cell
+def _():
+    1+3
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""

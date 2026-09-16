@@ -12,6 +12,39 @@
       "console": []
     },
     {
+      "id": "Kjct",
+      "code_hash": "84661823f5ff16fc5052a7fa9f529a09",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "hello, world\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "sHBb",
+      "code_hash": "0205157a6d96af245d63eacd6787f741",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<pre class='text-xs'>4</pre>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
       "id": "MJUe",
       "code_hash": "7831a116d931c68fee667380f10afe58",
       "outputs": [
