@@ -7,9 +7,23 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": null,
-      "outputs": [],
-      "console": []
+      "code_hash": "526fb3d35ad10fb55e62cfd32295d898",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Notebook is running\n",
+          "mimetype": "text/plain"
+        }
+      ]
     }
   ]
 }
