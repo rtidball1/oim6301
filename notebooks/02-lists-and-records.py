@@ -92,7 +92,6 @@ def _():
 def _(cost, tax):
     total_cost = cost + tax
     print(total_cost)
-
     return
 
 
@@ -276,12 +275,6 @@ def _(mo):
     return
 
 
-@app.cell
-def _(Prose):
-    Prose
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -291,19 +284,14 @@ def _(mo):
     it, write under the letter, and press `Ctrl+Enter`. Code still goes in cells of your
     own, added with the **+** button.
 
-    **A ·**
+    **A ·** the first line of code that matches gets printed when a score satishies two tests at once
 
-    **C ·**
+    **C ·** append always adds exactly one item, even when that item is a list
 
-    **D ·**
+    **D ·** tickers.sort() sorts the list in place and returns nothing (None), while sorted(tickers) leaves the original list untouched and returns a new sorted list.
 
-    **E ·**
+    **E ·** You would want two names sharing the same list when you want a change made visible everywhere else that list is
     """)
-    return
-
-
-@app.cell
-def _():
     return
 
 
@@ -331,11 +319,11 @@ def _(mo):
 
 @app.cell
 def _():
-    score = 95
-    if score >= 60:
-        print("Pass")
-    elif score >= 90:
+    score = 60
+    if score >= 90:
         print("A")
+    elif score >= 60:
+        print("Pass")
     return
 
 
@@ -371,6 +359,33 @@ def _(mo):
 def _():
     statuses = ["shipped", "pending", "shipped", "cancelled", "shipped"]
     statuses
+    return (statuses,)
+
+
+@app.cell
+def _(statuses):
+    shipped_count = 0
+    for status in statuses:
+        if status == "shipped":
+            shipped_count = shipped_count + 1
+    shipped_count
+    return (shipped_count,)
+
+
+@app.cell
+def _(statuses):
+    not_shipped_count = 0
+    for status1 in statuses:
+        if status1 != "shipped":
+            not_shipped_count = not_shipped_count + 1
+    not_shipped_count
+    return
+
+
+@app.cell
+def _(shipped_count, statuses):
+    percent_shipped = shipped_count / len(statuses) * 100
+    percent_shipped
     return
 
 
@@ -396,10 +411,24 @@ def _(mo):
 
 
 @app.cell
+def _(order_lines):
+    print(order_lines[2])
+    return
+
+
+@app.cell
 def _():
     order_lines = ["notebook", "pen"]
-    order_lines.append(["stapler", "tape"])
+    order_lines.extend(["stapler", "tape"])
     len(order_lines)
+    return (order_lines,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    append always adds exactly one item, even when that item is a list
+    """)
     return
 
 
@@ -430,6 +459,20 @@ def _():
     print(sorted(tickers))
     print(tickers.sort())
     tickers
+    return (tickers,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    tickers.sort() sorts the list in place and returns nothing (None), while sorted(tickers) leaves the original list untouched and returns a new sorted list.
+    """)
+    return
+
+
+@app.cell
+def _(tickers):
+    sorted(tickers, reverse=True)
     return
 
 
@@ -463,9 +506,23 @@ def _(mo):
 @app.cell
 def _():
     prices = [12.50, 8.00, 19.99]
-    sale_prices = prices
+    sale_prices = prices[:]
     sale_prices.append(4.99)
     prices
+    return prices, sale_prices
+
+
+@app.cell
+def _(prices, sale_prices):
+    prices is sale_prices
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    You would want two names sharing the same list when you want a change made visible everywhere else that list is
+    """)
     return
 
 
