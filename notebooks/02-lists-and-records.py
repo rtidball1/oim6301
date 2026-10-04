@@ -635,6 +635,24 @@ def _(mo):
     return
 
 
+@app.cell
+def _(first_order):
+    first_order[0]
+    return
+
+
+@app.cell
+def _(first_order):
+    first_order["freight"]
+    return
+
+
+@app.cell
+def _(first_order):
+    first_order["Freight"]
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -724,6 +742,35 @@ def _(mo):
     return
 
 
+@app.cell
+def _(orders):
+    largest_order = orders[0]
+    for order_3 in orders:
+        if order_3["Freight"] > largest_order["Freight"]:
+            largest_order = order_3
+    largest_order
+    return
+
+
+@app.cell
+def _(orders):
+    no_shipped_date_count = 0
+    for order_2 in orders:
+        if order_2["ShippedDate"] is None:
+            no_shipped_date_count = no_shipped_date_count + 1
+    no_shipped_date_count
+    return
+
+
+@app.cell
+def _(orders):
+    total_freight = 0
+    for order_1 in orders:
+        total_freight = total_freight + order_1["Freight"]
+    total_freight
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -746,8 +793,7 @@ def _(mo):
     mo.md(r"""
     *One row is ...*
 
-    *(Replace this line with your own sentence. If this cell shows you code instead of
-    text, use the cell menu to turn it into a markdown cell.)*
+    one order placed by a customer. If there are 30 orders, there will be 30 rows.
     """)
     return
 
@@ -785,6 +831,15 @@ def _():
         {"Symbol": "TSLA", "Shares": 150, "Price": 255.70},
     ]
     portfolio
+    return (portfolio,)
+
+
+@app.cell
+def _(portfolio):
+    portfolio_cost = 0
+    for holding in portfolio:
+        portfolio_cost = portfolio_cost + (holding["Shares"] * holding["Price"])
+    portfolio_cost
     return
 
 
