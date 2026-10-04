@@ -37,7 +37,7 @@ def _(mo):
     mo.md(r"""
     ## 1. The Question
 
-    *Who would use this, and what decision does it help them make? Two or three sentences, in words somebody outside this course would understand.*
+    I would use this event profit planner for my networking event company, Corporates Connect (Cc). It would help me decide how to price tickets, how many ticket pricing tiers to offer, and how much I can spend on an event in order to hit my profit goal.
     """)
     return
 
@@ -47,12 +47,23 @@ def _(mo):
     mo.md(r"""
     ## 2. My Plan Before AI
 
-    *Before you ask your agent anything, write how you would solve it: the steps, in order, in plain words, in five lines or more. Then answer these two questions:*
+    My first step will be to enter my estimated event expenses, estimated ticket prices for three tiers, and estimated number of tickets per tier.
+
+    I will enter different combinations of ticket prices and the number of tickets sold for the tool to compare.
+
+    With the assistance of an AI agent, I will get my event planner tool to calculate the projected revenue, expenses, and profit for the event based on my inputs.
+
+    For each combination, I will ask my tool to multiply the number of tickets in each tier by the respective price and add those amounts to calculate total revenue. It will then subtract total expenses to calculate the projected profit for the event.
+
+    I will also ask my tool to produce a table of combinations that meet or exceed my profit goal. It will identify the option that meets my goal with the fewest tickets sold and explain the result in a sentence. If none of the combinations meet my goal, I will get it to tell me to change an input.
 
     - *What does your loop carry from one step to the next, the way a running total carries its sum?*
+
+    My loop will carry a list of combinations that meet my profit goal. It will also remember the combination with the fewest tickets sold and update that result if it is beat.
+
     - *Which check will you use in section 6, and which two numbers should agree?*
 
-    *Commit this notebook with the message `mp1: plan before AI`.*
+    To check that the numbers are calculated correctly, I will calculate profit manually for a ticket combination and compare it with the profit calculated by the tool (using the same ticket prices per tier and expenses). My manual calculation must match the tools output.
     """)
     return
 
