@@ -554,14 +554,6 @@ def _():
     return (requests,)
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    The address below asks for the current temperature and wind at Babson's coordinates. `requests.get` sends the request, and `timeout=10` gives up after 10 seconds, so a server that never answers cannot hang your notebook.
-    """)
-    return
-
-
 @app.cell
 def _(requests):
     babson_url = (
@@ -571,6 +563,7 @@ def _(requests):
         "&temperature_unit=fahrenheit&wind_speed_unit=mph"
         "&timezone=America/New_York"
     )
+    print(babson_url)
     babson_reply = requests.get(babson_url, timeout=10)
     babson_reply.status_code
     return (babson_reply,)
