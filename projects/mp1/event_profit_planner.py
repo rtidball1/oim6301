@@ -82,7 +82,20 @@ def _(mo):
 
 @app.cell
 def _():
-    # Your inputs.
+    # My inputs. These are assumptions and will change per event.
+
+    capacity = 300
+    venue_minimum_spend = 4000
+    estimated_bar_spend_per_attendee = 15
+    food_cost_per_attendee = 10
+    spending_allowance_buffer = 500
+    profit_goal = 3000
+    early_bird_price = 25
+    ga1_price = 35
+    ga2_price = 45
+    early_bird_tickets = 50
+    ga1_tickets = 150
+    ga2_tickets = 100
     return
 
 
