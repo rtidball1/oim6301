@@ -9,7 +9,7 @@
 
 import marimo
 
-__generated_with = "0.24.2"
+__generated_with = "0.25.1"
 app = marimo.App(width="medium", sql_output="polars")
 
 
@@ -37,7 +37,7 @@ def _(mo):
     mo.md(r"""
     ## 1. The Question
 
-    I would use this event profit planner for my networking event company, Corporates Connect (Cc). It would help me decide how to price tickets, how many ticket pricing tiers to offer, and how much I can spend on an event in order to hit my profit goal.
+    I would use this event profit planner for my networking event company, Corporates Connect (Cc). The tool answers the question: “Among the ticket combinations tested, which has the lowest average ticket price while producing at least $3,000 in projected profit, after all expenses, including any venue minimum-spend shortfall, and without exceeding the venue’s capacity?
     """)
     return
 
