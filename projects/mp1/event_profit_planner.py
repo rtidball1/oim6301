@@ -9,7 +9,7 @@
 
 import marimo
 
-__generated_with = "0.25.1"
+__generated_with = "0.24.2"
 app = marimo.App(width="medium", sql_output="polars")
 
 
@@ -90,12 +90,40 @@ def _():
     food_cost_per_attendee = 10
     spending_allowance_buffer = 500
     profit_goal = 3000
-    early_bird_price = 25
-    ga1_price = 35
-    ga2_price = 45
-    early_bird_tickets = 50
-    ga1_tickets = 150
-    ga2_tickets = 100
+
+    # Each {dictionary} holds one ticket combination. The [list] groups them so the tool can compare multiple options.
+
+    ticket_combinations = [
+        {
+            "name": "Option 1",
+            "early_bird_price": 10,
+            "ga1_price": 15,
+            "ga2_price": 20,
+            "early_bird_tickets": 50,
+            "ga1_tickets": 150,
+            "ga2_tickets": 100,
+        },
+
+        {
+            "name": "Option 2",
+            "early_bird_price": 35,
+            "ga1_price": 40,
+            "ga2_price": 50,
+            "early_bird_tickets": 100,
+            "ga1_tickets": 100,
+            "ga2_tickets": 50,
+        },
+
+        {
+            "name": "Option 3",
+            "early_bird_price": 50,
+            "ga1_price": 70,
+            "ga2_price": 100,
+            "early_bird_tickets": 50,
+            "ga1_tickets": 100,
+            "ga2_tickets": 150,
+        },
+    ]
     return
 
 
@@ -111,6 +139,7 @@ def _(mo):
 
 @app.cell
 def _():
+    #
     return
 
 
