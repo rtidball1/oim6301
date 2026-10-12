@@ -24,10 +24,6 @@ def _():
 def _(mo):
     mo.md(r"""
     # Mini Project 1
-
-    Your choice of project, what each one asks for, the due date and how it is graded are on the Mini Project 1 page of the course site, linked from the calendar. This notebook is the shape to build it in. Keep the headings, and replace each line in italics with your own.
-
-    Save it in your course repository as `projects/mp1/<your-tool>.py`, named for what it does, such as `loan-schedule.py`, and open it with `uv run marimo edit`.
     """)
     return
 
@@ -37,7 +33,7 @@ def _(mo):
     mo.md(r"""
     ## 1. The Question
 
-    I would use this ticket pricing tool for my networking event company, Corporates Connect (Cc). My question is "for each of the three ticket-pricing options, what is the minimum total number of tickets I need to sell within each teir to reach $3,000 in projected profit after all expenses?"
+    I would use this ticket pricing tool for my networking event company, Corporates Connect (Cc). My question is "for each of the three ticket-pricing options, what is the minimum total number of tickets I need to sell within each tier to reach $3,000 in projected profit after all expenses?"
     """)
     return
 
@@ -74,10 +70,6 @@ def _(mo):
 def _(mo):
     mo.md(r"""
     ## 3. Inputs
-
-    Every number the project starts from goes in the cell below, and nowhere else, so that changing one input changes every result after it.
-
-    Copy in the default inputs for your project from the Mini Project 1 page. If you chose your own project, type your data in here, or ask your agent to generate it with `faker`. The required part reads no file.
     """)
     return
 
@@ -140,8 +132,6 @@ def _():
 def _(mo):
     mo.md(r"""
     ## 4. The Work
-
-    Add as many cells as you need. Try each step yourself before you ask your agent, and commit as you go.
     """)
     return
 
@@ -240,7 +230,6 @@ def _(
         }
 
         results.append(result)
-
     return (results,)
 
 
@@ -249,7 +238,7 @@ def _(mo):
     mo.md(r"""
     ## 5. The Answer
 
-    *A table of your results in the cell below, printed with `print` and f-strings, then one sentence here that answers the question in section 1, with the number in it.*
+    Under my current assumptions, the base option requires at least 173 ticket sales (50 Early Bird and 123 GA1) to produce $3,035 in projected profit, while the high option requires 114 sales (50 Early Bird and 64 GA1) to produce $3,050; the low option cannot reach the $3,000 goal even after selling all 300 available tickets.
     """)
     return
 
@@ -286,8 +275,6 @@ def _(results):
 def _(mo):
     mo.md(r"""
     ## 6. How I Know These Numbers Are Right
-
-    *At least one check that reaches a result a second, independent way. Name what you compared and what came out.*
     """)
     return
 
@@ -333,11 +320,11 @@ def _(mo):
     mo.md(r"""
     ## 7. Working With the Agent
 
-    The agent helped me reframe my original question around finding the lowest average ticket price that would produce at least $3,000 in projected profit without exceeding venue capacity. I did not keep that approach because it assumed a number of tickets sold for each combination. I wanted the tool to tell me how many tickets I needed to sell. When I am planning events I am most stressed about not selling "enough" tickets but find it hard to know what that amount is.
+    The agent helped me reframe my original question around finding the lowest average ticket price that would produce at least $3,000 in projected profit without exceeding venue capacity. I did not keep that approach because I needed to input a number of tickets sold for each combination. Instead, I wanted the tool to tell me how many tickets I needed to sell. When I am planning events I am most stressed about not selling "enough" tickets but find it hard to know what the amount I need to sell is. Therefore, I changed my question to match what I felt is more important versus keeping the question that my Agent thought was better.
 
-    I changed the question to find the minimum ticket sales needed for each pricing option: low, base, and high. Ticket quantities now represent the maximum available in each tier, rather than assumed sales. The tool adds sales one at a time in order for Early Bird, GA1, then GA2 until it reaches the profit goal of $3,000 or reaches a ticket or capacity limit.
+    I wanted to find the minimum ticket sales needed for each pricing option: low, base, and high. Ticket quantities now represent the maximum available in each tier, rather than assumed sales. The tool adds sales one at a time in order for Early Bird, GA1, then GA2 until it reaches the profit goal of $3,000 or reaches a ticket or capacity limit.
 
-    I started the program with the Agent helping reframe my question for the assignment but stepped back to think about what I actually wanted. This caused me to change my question.
+    The revised question appears in Section 1, and the ticket-by-ticket calculation is in the code cell under Section 4. I verified the results in Section 6 by calculating profit independently and checking that one fewer ticket would miss the goal for the base and high options.
     """)
     return
 
@@ -347,7 +334,11 @@ def _(mo):
     mo.md(r"""
     ## 8. Going Further
 
-    *Take at least one step past the main task, in any direction, and use your agent as much as you like. It does not have to work. State what you tried, what you found, and where it is in this notebook.*
+    I extended the tool to compare estimated bar spending of $10, $15, and $20 per attendee. The code cell in Section 8 recalculates the minimum ticket sales needed for each pricing option.
+
+    For the base option, the required sales were 194, 173, and 155 tickets respectively. For the high option, they were 122, 114, and 107. The low option could not reach the profit goal in any scenario.
+
+    This showed that lower bar spending increases the ticket sales needed to cover the venue shortfall and reach my profit goal.
     """)
     return
 
