@@ -160,10 +160,14 @@ def _(mo):
     **B ·** France, Germany, Brazil, and the USA all have four orders each.
 
     **C ·**
+    1. List — many order lines that must be added to, removed from, and reordered.
+    2. Set — only distinct customers matter, each counted once.
+    3. Dictionary — units sold looked up by product name as the key.
+    4. Tuple — one shipment with named parts that must never change.
 
-    **D ·**
+    **D ·** I would rather work with a list of dictionaries because it is easier to understand holding["Price"] versus holding[2]. I don't need to remember what 2 was.
 
-    **G ·**
+    **G ·** The first result for "Babson Park" is in Florida, not Massachusetts. Code that always takes `[0]` picked the wrong town because there was no way to know which match I actually meant.
     """)
     return
 
@@ -502,6 +506,15 @@ def _():
         ("TSLA", 150, 255.70),
     ]
     holdings
+    return (holdings,)
+
+
+@app.cell
+def _(holdings):
+    portfolio_cost = 0
+    for _symbol, _shares, _price in holdings:
+        portfolio_cost = portfolio_cost + (_shares * _price)
+    portfolio_cost
     return
 
 
@@ -689,11 +702,30 @@ def _(mo):
     return
 
 
+@app.cell
+def _(babson_weather):
+    wind_speed = babson_weather["current"]["wind_speed_10m"]
+    wind_unit = babson_weather["current_units"]["wind_speed_10m"]
+    f"The wind is blowing at {wind_speed} {wind_unit}."
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     **F · Another town.** Search for `Wellesley` the way the misspelled search did, with the correct spelling. Take the first place out of `results`, then its `latitude`, `longitude` and `admin1`. *Check yourself: latitude 42.29649, in Massachusetts.*
     """)
+    return
+
+
+@app.cell
+def _(requests):
+    wellesley_reply = requests.get(
+        "https://geocoding-api.open-meteo.com/v1/search?name=Wellesley&count=1",
+        timeout=10,
+    )
+    wellesley_place = wellesley_reply.json()["results"][0]
+    wellesley_place["latitude"], wellesley_place["longitude"], wellesley_place["admin1"]
     return
 
 
@@ -704,6 +736,16 @@ def _(mo):
 
     **Going further.** Use F's coordinates to ask for Wellesley's current temperature. Build the address with an f-string, so that changing the town changes the forecast.
     """)
+    return
+
+
+@app.cell
+def _(requests):
+    babson_park_reply = requests.get(
+        "https://geocoding-api.open-meteo.com/v1/search?name=Babson Park&count=1",
+        timeout=10,
+    )
+    babson_park_reply.json()
     return
 
 
