@@ -193,12 +193,64 @@ def _(mo):
     return
 
 
+@app.function
+def count_shares(portfolio):
+    total_shares = 0
+    for symbol, shares, price in portfolio:
+        total_shares = total_shares + shares
+    return total_shares
+
+
+@app.cell
+def _(holdings, retirement_holdings):
+    count_shares(holdings), count_shares(retirement_holdings)
+    return
+
+
+@app.function
+def find_largest(portfolio):
+    best_symbol = None
+    best_cost = 0
+    for symbol, shares, price in portfolio:
+        cost = shares * price
+        if cost > best_cost:
+            best_symbol = symbol
+            best_cost = cost
+    return (best_symbol, best_cost)
+
+
+@app.cell
+def _(holdings, retirement_holdings):
+    find_largest(holdings), find_largest(retirement_holdings)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## ✏️ B · Without `return`
 
     Copy `count_shares` into a new cell under a new name, and put `print(...)` where the `return` was. Call it and keep the result in a name. In a markdown cell under it, answer: what does that name hold, and what could the next cell do with it?
+    """)
+    return
+
+
+@app.cell
+def _(holdings):
+    def show_shares(portfolio):
+        total_shares = 0
+        for symbol, shares, price in portfolio:
+            total_shares = total_shares + shares
+        print(total_shares)
+
+    result = show_shares(holdings)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    Result holds None, because show_shares only prints and never returns a value. The next cell couldn't do anything useful with result, since there's no actual data in it.
     """)
     return
 
@@ -338,6 +390,31 @@ def _(mo):
     return
 
 
+@app.cell
+def _(requests):
+    def get_temperature(town):
+        search_reply = requests.get(
+            "https://geocoding-api.open-meteo.com/v1/search",
+            params={"name": town, "count": 1},
+            timeout=10,
+        )
+        place = search_reply.json()["results"][0]
+        weather_reply = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": place["latitude"],
+                "longitude": place["longitude"],
+                "current": "temperature_2m",
+                "temperature_unit": "fahrenheit",
+            },
+            timeout=10,
+        )
+        return weather_reply.json()["current"]["temperature_2m"]
+
+    get_temperature("Wellesley")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -347,6 +424,21 @@ def _(mo):
 
     *Check yourself: Dover, Wellesley, Cohasset, Needham, Westwood.*
     """)
+    return
+
+
+@app.cell
+def _(requests):
+    top_income_reply = requests.get(
+        "https://oim.zhili.dev/ma/towns",
+        params={"county": "Norfolk", "sort": "income", "order": "desc", "per_page": 5},
+        timeout=10,
+    )
+    top_income_towns = top_income_reply.json()["items"]
+    top_income_names = []
+    for town in top_income_towns:
+        top_income_names.append(town["name"])
+    top_income_names
     return
 
 
@@ -363,6 +455,30 @@ def _(mo):
 
     **Going further.** Write `town_history(name)`, which takes a town's name, makes both requests, and returns the history.
     """)
+    return
+
+
+@app.cell
+def _(requests):
+    wellesley_reply = requests.get(
+        "https://oim.zhili.dev/ma/towns",
+        params={"name": "Wellesley"},
+        timeout=10,
+    )
+    wellesley_town = wellesley_reply.json()["items"][0]
+    wellesley_dor_code = wellesley_town["dor_code"]
+    wellesley_dor_code
+    return (wellesley_dor_code,)
+
+
+@app.cell
+def _(requests, wellesley_dor_code):
+    history_reply = requests.get(
+        f"https://oim.zhili.dev/ma/towns/{wellesley_dor_code}/history",
+        params={"from_year": 2026, "to_year": 2026},
+        timeout=10,
+    )
+    history_reply.json()
     return
 
 
@@ -447,6 +563,22 @@ def _(mo):
     return
 
 
+@app.cell
+def _(get_page):
+    def get_all_towns():
+        first_page = get_page(1)
+        all_towns = first_page["items"]
+        pages = first_page["pagination"]["pages"]
+        for page_number in range(2, pages + 1):
+            next_page = get_page(page_number)
+            all_towns.extend(next_page["items"])
+        return all_towns
+
+    all_towns = get_all_towns()
+    len(all_towns), all_towns[0]["name"], all_towns[-1]["name"]
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -493,6 +625,43 @@ def _(mo):
 
     **Going further.** Post something more useful than one town's bill: choose a question somebody would ask, answer it from live data, and post the answer, in 140 characters or fewer.
     """)
+    return
+
+
+@app.cell
+def _(requests):
+    town_lookup_reply = requests.get(
+        "https://oim.zhili.dev/ma/towns",
+        params={"name": "Wellesley"},
+        timeout=10,
+    )
+    town_lookup = town_lookup_reply.json()["items"][0]
+    town_name = town_lookup["name"]
+    town_bill = town_lookup["average_single_family_bill_dollars"]
+    town_name, town_bill
+    return town_bill, town_name
+
+
+@app.cell
+def _(requests, town_bill, town_name):
+    board_reply = requests.post(
+        "https://oim.zhili.dev/message",
+        headers={"x-token": "rtidball1"},
+        json={"message": f"{town_name}: ${town_bill:,}"},
+        timeout=10,
+    )
+    board_reply.status_code, board_reply.json()
+    return
+
+
+@app.cell
+def _(requests, town_bill, town_name):
+    no_header_reply = requests.post(
+        "https://oim.zhili.dev/message",
+        json={"message": f"{town_name}: ${town_bill:,}"},
+        timeout=10,
+    )
+    no_header_reply.status_code, no_header_reply.json()
     return
 
 
