@@ -73,7 +73,7 @@ def _():
     forecast_days = 7
     event_start_hour = 18
     event_end_hour = 21
-    minimum_temperature_c = 17
+    minimum_temperature_c = 10
 
     location_api_url = "https://geocoding-api.open-meteo.com/v1/search"
     forecast_api_url = "https://api.open-meteo.com/v1/forecast"
@@ -489,6 +489,10 @@ def _(mo):
     Prediction:
 
     I predict that lowering the minimum temperature from 17°C to 10°C will make October 21, 2026 the best evening for an event. Its lowest temperature is 11.8°C (which is the highest temperature of the options), so it meets the new limit. It ties October 20 at 0% maximum hourly precipitation probability, but its maximum wind speed is lower: 5.9 km/h compared with 9.4 km/h. This prediction assumes the forecast does not change before I run the tool again.
+
+    What happened:
+
+    My prediction was correct! Five evenings now qualify. October 20 and 21 tie at 0% maximum hourly precipitation probability, and October 21 wins with lower wind: 5.9 versus 9.4 km/h. October 23 also qualifies at exactly 10°C, confirming that a value equal to the temperature limit passes. October 25 also qualifies with a temperature over 10°C.
     """)
     return
 
