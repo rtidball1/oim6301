@@ -64,6 +64,37 @@ def _(mo):
     return
 
 
+@app.cell
+def _():
+    city = "Vancouver"
+    province = "British Columbia"
+    country_code = "CA"
+
+    forecast_days = 7
+    event_start_hour = 18
+    event_end_hour = 21
+    minimum_temperature_c = 17
+
+    location_api_url = "https://geocoding-api.open-meteo.com/v1/search"
+    forecast_api_url = "https://api.open-meteo.com/v1/forecast"
+
+    location_search_limit = 100
+    request_timeout_seconds = 30
+    return (
+        city,
+        country_code,
+        event_end_hour,
+        event_start_hour,
+        forecast_api_url,
+        forecast_days,
+        location_api_url,
+        location_search_limit,
+        minimum_temperature_c,
+        province,
+        request_timeout_seconds,
+    )
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -72,11 +103,359 @@ def _(mo):
     return
 
 
+@app.cell
+def _():
+    import requests
+    import json
+    from datetime import datetime, timedelta
+    from zoneinfo import ZoneInfo
+
+    return ZoneInfo, datetime, json, requests, timedelta
+
+
+@app.cell
+def _(requests):
+    def find_location(city_name, province_name, country, api_url,
+                      search_limit, timeout_seconds):
+        response = requests.get(
+            api_url,
+            params={
+                "name": city_name,
+                "countryCode": country,
+                "count": search_limit,
+                "language": "en",
+                "format": "json",
+            },
+            timeout=timeout_seconds,
+        )
+
+        response.raise_for_status()
+        data = response.json()
+
+        matches = []
+
+        for _place in data.get("results", []):
+            if (
+                _place["name"].casefold() == city_name.casefold()
+                and _place.get("admin1", "").casefold() == province_name.casefold()
+                and _place["country_code"] == country
+            ):
+                matches.append({
+                    "name": _place["name"],
+                    "province": _place["admin1"],
+                    "country": _place["country"],
+                    "latitude": _place["latitude"],
+                    "longitude": _place["longitude"],
+                    "timezone": _place["timezone"],
+                })
+
+        if len(matches) != 1:
+            raise ValueError(
+                "The search did not find exactly one matching location. "
+                "Check the city, province, and country."
+            )
+
+        return matches
+
+    return (find_location,)
+
+
+@app.cell
+def _(requests, timedelta):
+    def fetch_hourly_weather(latitude, longitude, timezone_name,
+                             first_date, number_of_days,
+                             api_url, timeout_seconds):
+        last_date = first_date + timedelta(days=number_of_days - 1)
+
+        response = requests.get(
+            api_url,
+            params={
+                "latitude": latitude,
+                "longitude": longitude,
+                "timezone": timezone_name,
+                "start_date": str(first_date),
+                "end_date": str(last_date),
+                "hourly": (
+                    "temperature_2m,"
+                    "precipitation_probability,"
+                    "wind_speed_10m"
+                ),
+                "temperature_unit": "celsius",
+                "wind_speed_unit": "kmh",
+            },
+            timeout=timeout_seconds,
+        )
+
+        response.raise_for_status()
+        data = response.json()
+
+        hourly = data["hourly"]
+        times = hourly["time"]
+        temperatures = hourly["temperature_2m"]
+        precipitation = hourly["precipitation_probability"]
+        wind = hourly["wind_speed_10m"]
+
+        if (
+            len(times) != len(temperatures)
+            or len(times) != len(precipitation)
+            or len(times) != len(wind)
+        ):
+            raise ValueError("The API returned weather lists of different lengths.")
+
+        records = []
+
+        for _index in range(len(times)):
+            records.append({
+                "time": times[_index],
+                "temperature_c": temperatures[_index],
+                "precipitation_probability": precipitation[_index],
+                "wind_kmh": wind[_index],
+            })
+
+        return records
+
+    return (fetch_hourly_weather,)
+
+
+@app.cell
+def _(
+    ZoneInfo,
+    city,
+    country_code,
+    datetime,
+    event_end_hour,
+    event_start_hour,
+    fetch_hourly_weather,
+    find_location,
+    forecast_api_url,
+    forecast_days,
+    location_api_url,
+    location_search_limit,
+    province,
+    request_timeout_seconds,
+):
+    if not 0 <= event_start_hour <= event_end_hour <= 23:
+        raise ValueError("Use whole-hour event times within the same day.")
+
+    if not 1 <= forecast_days <= 7:
+        raise ValueError("For this project, choose between one and seven days.")
+
+    locations = find_location(
+        city,
+        province,
+        country_code,
+        location_api_url,
+        location_search_limit,
+        request_timeout_seconds,
+    )
+
+    selected_location = locations[0]
+
+    local_now = datetime.now(ZoneInfo(selected_location["timezone"]))
+    first_forecast_date = local_now.date()
+
+    weather_records = fetch_hourly_weather(
+        selected_location["latitude"],
+        selected_location["longitude"],
+        selected_location["timezone"],
+        first_forecast_date,
+        forecast_days,
+        forecast_api_url,
+        request_timeout_seconds,
+    )
+
+    print(
+        f"Location: {selected_location['name']}, "
+        f"{selected_location['province']}, "
+        f"{selected_location['country']}"
+    )
+    print(f"Fetched {len(weather_records)} hourly records.")
+    return first_forecast_date, local_now, selected_location, weather_records
+
+
+@app.cell
+def _(
+    event_end_hour,
+    event_start_hour,
+    first_forecast_date,
+    forecast_days,
+    local_now,
+    minimum_temperature_c,
+    timedelta,
+    weather_records,
+):
+    # Group records by timestamp so missing or duplicate hours can be detected.
+    weather_by_time = {}
+
+    for _record in weather_records:
+        _timestamp = _record["time"]
+
+        if _timestamp not in weather_by_time:
+            weather_by_time[_timestamp] = []
+
+        weather_by_time[_timestamp].append(_record)
+
+    evening_results = []
+    best_evening = None
+
+    for _day_offset in range(forecast_days):
+        _date = first_forecast_date + timedelta(days=_day_offset)
+        _evening_records = []
+
+        for _hour in range(event_start_hour, event_end_hour + 1):
+            _expected_time = f"{_date}T{_hour:02d}:00"
+            _matches = weather_by_time.get(_expected_time, [])
+
+            if len(_matches) != 1:
+                raise ValueError(
+                    f"Expected exactly one weather record for {_expected_time}."
+                )
+
+            _hour_record = _matches[0]
+
+            if (
+                _hour_record["temperature_c"] is None
+                or _hour_record["precipitation_probability"] is None
+                or _hour_record["wind_kmh"] is None
+            ):
+                raise ValueError(f"Missing weather values for {_expected_time}.")
+
+            _evening_records.append(_hour_record)
+
+        # Start with the first hour, then compare every event hour.
+        _lowest_temperature = _evening_records[0]["temperature_c"]
+        _highest_precipitation = _evening_records[0]["precipitation_probability"]
+        _strongest_wind = _evening_records[0]["wind_kmh"]
+
+        for _hour_record in _evening_records:
+            if _hour_record["temperature_c"] < _lowest_temperature:
+                _lowest_temperature = _hour_record["temperature_c"]
+
+            if _hour_record["precipitation_probability"] > _highest_precipitation:
+                _highest_precipitation = _hour_record["precipitation_probability"]
+
+            if _hour_record["wind_kmh"] > _strongest_wind:
+                _strongest_wind = _hour_record["wind_kmh"]
+
+        _temperature_passes = _lowest_temperature >= minimum_temperature_c
+
+        # Do not recommend an event window that has already started.
+        _already_started = (
+            _date == local_now.date()
+            and local_now.hour >= event_start_hour
+        )
+
+        if _already_started:
+            _status = "Already started"
+        elif _temperature_passes:
+            _status = "Qualifies"
+        else:
+            _status = "Too cold"
+
+        _evening = {
+            "date": str(_date),
+            "lowest_temperature_c": _lowest_temperature,
+            "highest_precipitation_probability": _highest_precipitation,
+            "strongest_wind_kmh": _strongest_wind,
+            "status": _status,
+        }
+
+        evening_results.append(_evening)
+
+        if _status == "Qualifies":
+            if best_evening is None:
+                best_evening = _evening
+            elif (
+                _highest_precipitation
+                < best_evening["highest_precipitation_probability"]
+            ):
+                best_evening = _evening
+            elif (
+                _highest_precipitation
+                == best_evening["highest_precipitation_probability"]
+                and _strongest_wind < best_evening["strongest_wind_kmh"]
+            ):
+                best_evening = _evening
+    return best_evening, evening_results
+
+
+@app.cell
+def _(json, local_now, mo, weather_records):
+    snapshot_folder = mo.notebook_location() / "data"
+    snapshot_folder.mkdir(parents=True, exist_ok=True)
+
+    snapshot_stamp = local_now.strftime("%Y%m%d_%H%M%S_%f")
+    snapshot_path = snapshot_folder / f"weather_{snapshot_stamp}.json"
+
+    with snapshot_path.open("w", encoding="utf-8") as _snapshot_file:
+        json.dump(weather_records, _snapshot_file, indent=2)
+
+    print(f"Saved {len(weather_records)} records to {snapshot_path.name}")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ##5. The Answer
     """)
+    return
+
+
+@app.cell
+def _(
+    best_evening,
+    evening_results,
+    event_end_hour,
+    event_start_hour,
+    forecast_days,
+    minimum_temperature_c,
+    selected_location,
+):
+    print(
+        f"Location: {selected_location['name']}, "
+        f"{selected_location['province']}, {selected_location['country']}"
+    )
+    print(
+        f"Hours checked: {event_start_hour:02d}:00–"
+        f"{event_end_hour:02d}:00, including both endpoints, "
+        f"in {selected_location['timezone']}."
+    )
+    print()
+
+    print(
+        f"{'Date':<12} {'Min temp °C':>12} "
+        f"{'Max precip %':>13} {'Max wind km/h':>14} {'Result':>18}"
+    )
+
+    for _answer in evening_results:
+        print(
+            f"{_answer['date']:<12} "
+            f"{_answer['lowest_temperature_c']:>12.1f} "
+            f"{_answer['highest_precipitation_probability']:>13.0f} "
+            f"{_answer['strongest_wind_kmh']:>14.1f} "
+            f"{_answer['status']:>18}"
+        )
+
+    print()
+
+    if best_evening is None:
+        print(
+            f"No remaining evening in the {forecast_days}-day period stays "
+            f"at least {minimum_temperature_c}°C at every checked event hour."
+        )
+    else:
+        print(
+            f"The best qualifying evening is {best_evening['date']}: "
+            f"its lowest event-hour temperature is "
+            f"{best_evening['lowest_temperature_c']:.1f}°C, "
+            f"its highest hourly precipitation probability is "
+            f"{best_evening['highest_precipitation_probability']:.0f}%, "
+            f"and its strongest hourly wind is "
+            f"{best_evening['strongest_wind_kmh']:.1f} km/h; "
+            f"it ranks first by precipitation probability, then wind, "
+            f"then earliest date."
+        )
     return
 
 
@@ -100,6 +479,16 @@ def _(mo):
 def _(mo):
     mo.md(r"""
     ##8. Reading it Back
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Prediction:
+
+    I predict that lowering the minimum temperature from 17°C to 10°C will make October 21, 2026 the best evening for an event. Its lowest temperature is 11.8°C (which is the highest temperature of the options), so it meets the new limit. It ties October 20 at 0% maximum hourly precipitation probability, but its maximum wind speed is lower: 5.9 km/h compared with 9.4 km/h. This prediction assumes the forecast does not change before I run the tool again.
     """)
     return
 
