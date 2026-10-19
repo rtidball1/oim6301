@@ -467,10 +467,59 @@ def _(mo):
     return
 
 
+@app.cell
+def _(
+    datetime,
+    evening_results,
+    event_end_hour,
+    event_start_hour,
+    weather_records,
+):
+    check_date = evening_results[0]["date"]
+    check_temperatures = []
+
+    print(f"Checking event-hour temperatures for {check_date}:")
+
+    for _check_record in weather_records:
+        _check_time = datetime.fromisoformat(_check_record["time"])
+
+        if (
+            str(_check_time.date()) == check_date
+            and event_start_hour <= _check_time.hour <= event_end_hour
+        ):
+            check_temperatures.append(_check_record["temperature_c"])
+            print(
+                f"{_check_time:%H:%M}: "
+                f"{_check_record['temperature_c']:.1f}°C"
+            )
+
+    if len(check_temperatures) != event_end_hour - event_start_hour + 1:
+        raise ValueError("The check does not have all expected event hours.")
+
+    independent_minimum = min(check_temperatures)
+    table_minimum = evening_results[0]["lowest_temperature_c"]
+
+    print()
+    print(f"Independent minimum: {independent_minimum:.1f}°C")
+    print(f"Results-table minimum: {table_minimum:.1f}°C")
+    print(f"Numbers agree: {independent_minimum == table_minimum}")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ##7. Working With the Agent
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I clarified the decision rule while working with the agent. The agent asked for precipitation and wind cutoffs, but as an event host, I did not think fixed cutoffs for those variables were necessary for this tool. I wanted to use fixed event hours and a minimum temperature requirement to determine which evenings qualify. I then asked the agent to rank qualifying evenings by lowest maximum hourly precipitation probability, followed by lowest maximum wind speed.
+
+    This rule appears in Section 4, in the cell that builds `evening_results` and selects `best_evening`. I checked the output in Section 5: October 20 and 21 tied at 0% maximum hourly precipitation probability, and the tool selected October 21 because its maximum wind speed was lower: 5.9 km/h compared with 9.4 km/h.
     """)
     return
 
