@@ -20,7 +20,7 @@ def _(mo):
 
     My tool will answer "what evening in the next seven days has the best weather for an outdoor Corporates Connect event in Vancouver, British Columbia, Canada?"
 
-    As the founder of Corporates Connect (Cc), I will use this tool when deciding if I should host a small and last minute outdoor Cc event. If the weather is good (warm but not too hot, no rain, and light wind) I will host an event because I know more people are likely to come that week!
+    As the founder of Corporates Connect (Cc), I will use this tool when deciding if I should host a small and last minute outdoor Cc event. If the weather is good (at or above my minimum temperature, with lower precipitation probability and wind preferred) I will host an event because I know more people are likely to come that week!
     """)
     return
 
@@ -30,7 +30,7 @@ def _(mo):
     mo.md(r"""
     ##2. My Plan Before AI
 
-    My plan is to compare temperature, precipitation probability, and wind during the evening hours I want to host an event. I will use the open-meteo's geocoding API to identify Vancouver, British Columbia, Canada and then send the coordinates to the forecast API. One function will find the location and another will use coordinates to find the hourly weather and return a list. The output I want will be a table showing the coldest temperature, highest precipitation probability, and strongest wind for each evening, calculated acorss the event hours and whether each evening meets the limits that I set for my event.
+    My plan is to compare temperature, precipitation probability, and wind during the evening hours I want to host an event. I will use Open-Meteo's geocoding API to identify Vancouver, British Columbia, Canada and then send the coordinates to the forecast API. One function will find the location and another will use coordinates to find the hourly weather and return a list. The output I want will be a table showing the coldest temperature, highest precipitation probability, and strongest wind for each evening, calculated across the event hours and whether each evening meets the limits that I set for my event.
 
     Which functions will your tool need? For each, what goes in and what comes out?
 
@@ -80,11 +80,18 @@ def _():
 
     location_search_limit = 100
     request_timeout_seconds = 30
+
+    event_time_options = [
+        {"name": "5–8 p.m.", "start_hour": 17, "end_hour": 20},
+        {"name": "6–9 p.m.", "start_hour": 18, "end_hour": 21},
+        {"name": "7–10 p.m.", "start_hour": 19, "end_hour": 22},
+    ]
     return (
         city,
         country_code,
         event_end_hour,
         event_start_hour,
+        event_time_options,
         forecast_api_url,
         forecast_days,
         location_api_url,
@@ -376,7 +383,7 @@ def _(
                 and _strongest_wind < best_evening["strongest_wind_kmh"]
             ):
                 best_evening = _evening
-    return best_evening, evening_results
+    return best_evening, evening_results, weather_by_time
 
 
 @app.cell
@@ -519,7 +526,7 @@ def _(mo):
     mo.md(r"""
     I clarified the decision rule while working with the agent. The agent asked for precipitation and wind cutoffs, but as an event host, I did not think fixed cutoffs for those variables were necessary for this tool. I wanted to use fixed event hours and a minimum temperature requirement to determine which evenings qualify. I then asked the agent to rank qualifying evenings by lowest maximum hourly precipitation probability, followed by lowest maximum wind speed.
 
-    This rule appears in Section 4, in the cell that builds `evening_results` and selects `best_evening`. I checked the output in Section 5: October 20 and 21 tied at 0% maximum hourly precipitation probability, and the tool selected October 21 because its maximum wind speed was lower: 5.9 km/h compared with 9.4 km/h.
+    This rule appears in Section 4, in the cell that builds evening_results and selects best_evening. In my first run, I checked the output in Section 5: October 20 and 21 tied at 0% maximum hourly precipitation probability, and the tool selected October 21 because its maximum wind speed was lower: 5.9 km/h compared with 9.4 km/h.
     """)
     return
 
@@ -535,9 +542,23 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    Function 1: find_location()
+
+    This function takes the city, province, country code, API address, search limit, and timeout. It searches for the location and checks that the result matches Vancouver, British Columbia, Canada. It returns a list containing one matching location, including its coordinates and time zone.
+
+    One line I needed help understanding was data = response.json(). It converts the API’s JSON reply into Python dictionaries and lists so the function can work with the location information.
+
+    Function 2: fetch_hourly_weather()
+
+    This function takes the coordinates, time zone, first date, number of days, API address, and timeout. It requests the forecast and returns a list of hourly records. Each record contains the date and time, temperature, precipitation probability, and wind speed.
+
+    One line I needed help understanding was last_date = first_date + timedelta(days=number_of_days - 1). I asked why this line subtracts one from the number of days. The starting date already counts as the first day, so the function only needs to add six more days to get seven days in total.
+
     Prediction:
 
-    I predict that lowering the minimum temperature from 17°C to 10°C will make October 21, 2026 the best evening for an event. Its lowest temperature is 11.8°C (which is the highest temperature of the options), so it meets the new limit. It ties October 20 at 0% maximum hourly precipitation probability, but its maximum wind speed is lower: 5.9 km/h compared with 9.4 km/h. This prediction assumes the forecast does not change before I run the tool again.
+    I predict that lowering the minimum temperature from 17°C to 10°C will make October 21, 2026 the best evening for an event. Its lowest temperature during event hours is 11.8°C (which is the highest minimum evening temperature of the options), so it meets the new limit. It ties October 20 at 0% maximum hourly precipitation probability, but its maximum wind speed is lower: 5.9 km/h compared with 9.4 km/h. This prediction assumes the forecast does not change before I run the tool again.
+
+    Note: These observations describe my first prediction test. In a later run, the forecast values changed, but October 21 remained the best qualifying evening. The main results and the extension showed matching values for the same 6–9 p.m. window.
 
     What happened:
 
@@ -554,10 +575,143 @@ def _(mo):
     return
 
 
+@app.cell
+def _(
+    event_time_options,
+    first_forecast_date,
+    forecast_days,
+    local_now,
+    minimum_temperature_c,
+    timedelta,
+    weather_by_time,
+):
+    for _window in event_time_options:
+        _qualifying_dates = 0
+        _best_window_evening = None
+
+        for _offset in range(forecast_days):
+            _window_date = first_forecast_date + timedelta(days=_offset)
+
+            # Skip today's window if it has already started.
+            if (
+                _window_date == local_now.date()
+                and local_now.hour >= _window["start_hour"]
+            ):
+                continue
+
+            _window_temperatures = []
+            _window_precipitation = []
+            _window_wind = []
+
+            for _window_hour in range(
+                _window["start_hour"], _window["end_hour"] + 1
+            ):
+                _window_timestamp = (
+                    f"{_window_date}T{_window_hour:02d}:00"
+                )
+
+                _window_matches = weather_by_time.get(
+                    _window_timestamp, []
+                )
+
+                if len(_window_matches) != 1:
+                    raise ValueError(
+                        f"Expected one record for {_window_timestamp}."
+                    )
+
+                _window_record = _window_matches[0]
+
+                if (
+                    _window_record["temperature_c"] is None
+                    or _window_record["precipitation_probability"] is None
+                    or _window_record["wind_kmh"] is None
+                ):
+                    raise ValueError(
+                        f"Missing weather values for {_window_timestamp}."
+                    )
+
+                _window_temperatures.append(
+                    _window_record["temperature_c"]
+                )
+                _window_precipitation.append(
+                    _window_record["precipitation_probability"]
+                )
+                _window_wind.append(_window_record["wind_kmh"])
+
+            _window_min_temp = min(_window_temperatures)
+            _window_max_precip = max(_window_precipitation)
+            _window_max_wind = max(_window_wind)
+
+            if _window_min_temp >= minimum_temperature_c:
+                _qualifying_dates = _qualifying_dates + 1
+
+                _candidate = {
+                    "date": str(_window_date),
+                    "temperature": _window_min_temp,
+                    "precipitation": _window_max_precip,
+                    "wind": _window_max_wind,
+                }
+
+                if _best_window_evening is None:
+                    _best_window_evening = _candidate
+                elif (
+                    _window_max_precip
+                    < _best_window_evening["precipitation"]
+                ):
+                    _best_window_evening = _candidate
+                elif (
+                    _window_max_precip
+                    == _best_window_evening["precipitation"]
+                    and _window_max_wind < _best_window_evening["wind"]
+                ):
+                    _best_window_evening = _candidate
+
+        print(f"Event time: {_window['name']}")
+        print(f"Qualifying dates: {_qualifying_dates}")
+
+        if _best_window_evening is None:
+            print("No date meets the temperature requirement.")
+        else:
+            print(f"Best date: {_best_window_evening['date']}")
+            print(
+                f"Minimum temperature: "
+                f"{_best_window_evening['temperature']:.1f}°C"
+            )
+            print(
+                f"Maximum hourly precipitation probability: "
+                f"{_best_window_evening['precipitation']:.0f}%"
+            )
+            print(
+                f"Maximum wind speed: "
+                f"{_best_window_evening['wind']:.1f} km/h"
+            )
+
+        print()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I extended the tool to compare three event times: 5–8 p.m., 6–9 p.m., and 7–10 p.m. I wanted to see whether changing the event time would give me more dates that meet my minimum temperature requirement. For each time window, the tool counts qualifying dates and selects the best date using precipitation probability, then wind speed, with the earliest date breaking any remaining tie.
+
+    Using a minimum temperature of 10°C, I found six qualifying dates for 5–8 p.m., five for 6–9 p.m., and four for 7–10 p.m. October 21 was the best date for all three windows. I found that starting earlier gave me more possible dates which makes sense because as the evening goes on it normally gets cooler.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ##10. Time Spent
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I spent 4.5 hours on this tool. Compared to mini project 1, which took me a whole day (maybe 10 hours), this was much faster. I was quicker to decide what kind of tool would be the most compatible for the project as well as useful for my company.
     """)
     return
 
