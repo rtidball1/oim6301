@@ -1,5 +1,8 @@
 bmi = 27
 
+def compute_bmi(weight, height):
+    return weight / (height ** 2)
+
 def classify_bmi(bmi):
     if bmi >= 30:
         category = "Obese"
