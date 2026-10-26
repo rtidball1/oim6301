@@ -12,7 +12,7 @@
 
 import marimo
 
-__generated_with = "0.25.1"
+__generated_with = "0.24.2"
 app = marimo.App(width="medium", sql_output="polars")
 
 
@@ -199,6 +199,33 @@ def _(mo):
     return
 
 
+@app.cell
+def _(towns_from_file):
+    million_dollar_count = 0
+
+    for town in towns_from_file:
+        value = int(town["average_single_family_value_dollars"])
+
+        if value >= 1000000:
+            million_dollar_count += 1
+
+    print(million_dollar_count)
+    return
+
+
+@app.cell
+def _(towns_from_file):
+    smallest_town = towns_from_file[0]
+
+    for population_town in towns_from_file:
+        if int(population_town["population"]) < int(smallest_town["population"]):
+            smallest_town = population_town
+
+    print(smallest_town["name"])
+    print(smallest_town["population"])
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -342,7 +369,7 @@ def _(mo, town_table):
         ORDER BY towns DESC
         """
     )
-    return (towns_over_threshold,)
+    return
 
 
 @app.cell(hide_code=True)
