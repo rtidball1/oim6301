@@ -346,6 +346,35 @@ def _(mo):
     return
 
 
+@app.cell
+def _(pl, town_table):
+    town_table_county_counts = (
+        town_table.group_by("county")
+        .agg(pl.len().alias("towns"))
+        .sort("towns", descending=True)
+    )
+    town_table_county_counts
+    return
+
+
+@app.cell
+def _(ma_counties, pl):
+    ma_counties_table = pl.DataFrame(ma_counties)
+    ma_counties_table
+    return
+
+
+@app.cell
+def _(pl, town_table):
+    top_bill_large_towns = (
+        town_table.filter(pl.col("population") > 50_000)
+        .sort("average_single_family_bill_dollars", descending=True)
+        .head(5)
+    )
+    top_bill_large_towns
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -364,7 +393,7 @@ def _(mo, town_table):
         f"""
         SELECT county, COUNT(*) AS towns
         FROM town_table
-        WHERE average_single_family_value_dollars >= 1000000
+        WHERE average_single_family_value_dollars >= 2000000
         GROUP BY county
         ORDER BY towns DESC
         """
@@ -389,6 +418,31 @@ def _(mo):
 
     **Going further.** Write a SQL query of your own on `town_table`, and check its answer in polars.
     """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Raising the bar to $2,000,000 is a stricter test than $1,000,000: every town that qualifies at $2,000,000 also qualified at $1,000,000, but not the reverse. So no county's count can go up, and some counties' counts will go down (or drop to zero) as towns between $1,000,000 and $2,000,000 fall out of the count.
+    """)
+    return
+
+
+@app.cell
+def _(pl, town_table):
+    million_dollar_share_2m = (
+        town_table.group_by("county")
+        .agg(
+            pl.len().alias("towns"),
+            (pl.col("average_single_family_value_dollars") >= 2_000_000)
+            .sum()
+            .alias("million_dollar_towns"),
+        )
+        .with_columns((pl.col("million_dollar_towns") / pl.col("towns")).alias("share"))
+        .sort("million_dollar_towns", descending=True)
+    )
+    million_dollar_share_2m
     return
 
 
@@ -442,6 +496,20 @@ def _(mo):
 
     **Going further.** Color the bars or dots by a column with `color=`, and explain what the colors add.
     """)
+    return
+
+
+@app.cell
+def _(alt, mo, town_table):
+    top_value_towns = town_table.sort("average_single_family_value_dollars", descending=True).head(10)
+
+    my_chart = mo.ui.altair_chart(
+        top_value_towns.plot.bar(
+            y=alt.Y("name", sort="-x", title="Town"),
+            x=alt.X("average_single_family_value_dollars", title="Average Single-Family Home Value ($)"),
+        ).properties(title="The 10 Massachusetts Towns With the Highest Average Home Value")
+    )
+    my_chart
     return
 
 
