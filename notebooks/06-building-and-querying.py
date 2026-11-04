@@ -131,6 +131,7 @@ def _(mo):
 
 @app.cell
 def _(duckdb, mo):
+    # Rebuilds the database file fresh each run
     _file = mo.notebook_dir().parent / "data" / "ma-towns.duckdb"
     _file.parent.mkdir(exist_ok=True)
     _file.unlink(missing_ok=True)
@@ -225,7 +226,31 @@ def _(mo):
 
 
 @app.cell
-def _():
+def _(database, duckdb):
+    with duckdb.connect(database) as _con:
+        _con.execute("""
+            CREATE TABLE IF NOT EXISTS town_bills (
+                town VARCHAR,
+                year INTEGER,
+                average_bill DECIMAL(10,2),
+                PRIMARY KEY (town, year),
+                FOREIGN KEY (town) REFERENCES towns(name)
+            );
+
+            DELETE FROM town_bills WHERE town = 'Wellesley' AND year IN (2024, 2025);
+
+            INSERT INTO town_bills (town, year, average_bill)
+            VALUES ('Wellesley', 2024, 18690);
+
+            INSERT INTO town_bills (town, year, average_bill)
+            VALUES ('Wellesley', 2025, 19792);
+        """)
+    return
+
+
+@app.cell
+def _(ask):
+    (ask("SELECT * FROM town_bills"))
     return
 
 
