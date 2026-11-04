@@ -181,3 +181,5 @@ cython_debug/
 .cursorindexingignore
 
 __marimo__/
+
+*.duckdb*
