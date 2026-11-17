@@ -128,6 +128,7 @@ def _(mo):
 
 @app.cell
 def _(ask):
+    # LEFT JOIN keeps every person. CASE contributes zero for missing or inactive assignments.
     active_hours = ask("""
         SELECT
             p.person_id,
@@ -358,6 +359,7 @@ def _(mo):
 
 @app.cell
 def _(ask):
+    # COUNT(DISTINCT r.person_id) counts a report once even if they have several assignments.
     # people joined to itself: `m` is the manager side, `r` is the report
     # side. Reading "manager" as "anyone who is somebody's manager_id" --
     # an INNER join on people r ON r.manager_id = m.person_id -- so a
@@ -452,7 +454,7 @@ def _(mo):
     project, only Matthew Smith qualifies (75.0%), so there's no
     comparison to make at that level; at 2 projects, Jack Garcia leads
     (69.2%) and Lily Patel trails (30.4%); at 3 projects, Henry Brown is
-    the strongest performer company-wide (90.0%) and Henry Cooper the
+    the strongest performer among the 15 included employees (90.0%) and Henry Cooper the
     weakest at that level (22.2%); at 4 projects, Emma Cooper leads
     (72.7%) and Ethan Kim trails (38.5%); and at 5 projects, the heaviest
     load anyone carries, Matthew Lee (60.0%) and Harper Chen (55.6%) are
@@ -516,6 +518,7 @@ def _(mo):
 
 @app.cell
 def _(ask, project_totals):
+    # Count tasks and sum expenses separately for each project, without joining the two tables.
     _expected = ask("""
         SELECT project_id,
             (SELECT count(*) FROM tasks
@@ -525,6 +528,7 @@ def _(ask, project_totals):
         FROM projects
         ORDER BY project_id
     """)
+    # Check the displayed result by project ID so an error cannot hide in the grand totals.
     _actual = project_totals.select("project_id", "n_tasks", "total_expenses").sort("project_id")
     assert _actual.rows() == _expected.rows(), "Q6 differs from the independent per-project counts or sums."
     mo_check_q6 = (
@@ -603,8 +607,7 @@ def _(mo):
 
 @app.cell
 def _(ask):
-    # The raw joins alone, no GROUP BY, no aggregation -- exactly the
-    # query named in the assignment's own instructions for Q8.
+    # COUNT(*) counts the rows from the raw joins before any grouping.
     ask("""
         SELECT count(*) AS raw_join_rows
         FROM people m

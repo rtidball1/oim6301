@@ -17,8 +17,8 @@ Rules followed (see README.md for the full scenario):
   - a project's status is one of planned, active, paused, done
   - a task is assigned only to somebody who works on its project, and never
     before that person's start date -- broken ON PURPOSE in exactly two
-    tasks (see BROKEN_RULE_TASKS at the bottom of main()), for business
-    question 7 to find.
+    tasks. `gen_tasks()` creates those cases, and `main()` prints their IDs
+    and reasons so you can compare them with question 7.
 
 Uses a fixed random seed so it writes the same files every time.
 """

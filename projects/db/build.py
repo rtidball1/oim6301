@@ -15,10 +15,7 @@ app = marimo.App(width="medium")
 # ----------------------------------------------------------------------------
 # Every marimo cell is an ordinary Python function wrapped in @app.cell.
 # marimo looks at each function's parameters to know which other cells'
-# outputs it depends on, and at its `return (...)` tuple to know which
-# names it hands to later cells — so the variable names in every cell
-# below matter: this edit only adds comments, it never renames anything
-# marimo relies on to wire the cells together.
+# outputs it depends on. The returned names are available to later cells.
 # ============================================================================
 @app.cell
 def _():
@@ -567,14 +564,8 @@ def _(ask):
 # ============================================================================
 @app.cell
 def _(mo):
-    # NOTE: this string carries a couple of stray `"..."` fragments baked
-    # into the text (left over from an earlier edit) -- harmless to
-    # marimo, since it's just literal characters inside the markdown, but
-    # worth a cleanup pass. Left as-is here since this edit only adds
-    # comments, it doesn't change any wording.
     mo.md("""
-    I expect **2** -- only the two founders have `manager_id IS NULL`; "
-        "everyone else reports to somebody.
+    I expect **2** because only the two founders have no manager.
     """)
     return
 
@@ -592,10 +583,8 @@ def _(ask):
 # ============================================================================
 @app.cell
 def _(mo):
-    # Same stray-quote note as above -- cosmetic only, not changed here.
     mo.md("""
-    I expect **3** -- `gen_projects()` builds `status_plan` with exactly "
-        "`['planned'] * 3` before shuffling it in.
+    I expect **3** because `gen_projects()` puts exactly three planned projects in `status_plan`.
     """)
     return
 
