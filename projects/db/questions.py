@@ -684,6 +684,41 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask):
+    # The raw joins alone, no GROUP BY, no aggregation -- exactly the
+    # query named in the assignment's own instructions for Q8.
+    ask("""
+        SELECT count(*) AS raw_join_rows
+        FROM people m
+        JOIN people r ON r.manager_id = m.person_id
+        LEFT JOIN assignments a ON a.person_id = r.person_id
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    YOUR TURN: write your own "did it match" and "what one row means"
+    here, in your own words. The facts to work from: the actual raw join
+    produced 55 rows, against a prediction of 46. Of the 23 reports, 19
+    have at least one assignment (51 assignment rows between them) and 4
+    have zero -- and those 4 still count as 1 row each, not 0, because of
+    the LEFT JOIN. 51 + 4 = 55.
+
+    Questions to answer in your own words:
+    - Did your prediction match? It's off by 9 -- why, specifically?
+      (Hint: your estimate assumed every report had about the same
+      number of assignments; the real data doesn't work that way.)
+    - What does one row of the final, grouped answer above (the one with
+      manager_name, n_direct_reports, reports_total_hours_per_week) mean?
+      Pick one actual row from that table and explain it the way you'd
+      explain it to the manager.
+    """)
+    return
+
+
 # ============================================================================
 # Going Further
 # ============================================================================
