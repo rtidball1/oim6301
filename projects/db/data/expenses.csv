@@ -1,0 +1,171 @@
+expense_id,project_id,expense_date,amount,category,note
+1,2,2026-10-13,290.65,travel,Client site visit
+2,7,2025-06-09,107.86,software,Dev tooling license
+3,8,2026-07-28,306.28,software,API credits
+4,10,2026-10-07,1562.68,GPU cloud,Inference hosting
+5,4,2026-07-08,158.64,software,Dev tooling license
+6,1,2026-08-30,1908.5,data labeling,QA pass on labels
+7,13,2026-07-28,216.38,software,API credits
+8,10,2026-10-11,100.28,software,SaaS subscription
+9,6,2026-10-27,151.93,software,API credits
+10,4,2026-01-02,291.51,software,Dev tooling license
+11,8,2025-10-28,1013.74,travel,Team offsite
+12,10,2026-09-23,379.47,travel,Client site visit
+13,6,2026-09-25,439.91,software,API credits
+14,6,2026-09-28,433.86,software,API credits
+15,3,2025-08-13,787.66,GPU cloud,Batch eval run
+16,4,2025-10-31,296.2,travel,Client site visit
+17,1,2026-09-14,518.36,travel,Team offsite
+18,2,2026-10-23,482.13,software,Dev tooling license
+19,3,2026-08-17,899.1,GPU cloud,Fine-tuning job
+20,6,2026-10-02,562.34,travel,Team offsite
+21,6,2026-10-21,584.94,travel,Client site visit
+22,2,2026-10-23,267.49,software,Dev tooling license
+23,8,2026-03-23,476.12,software,Dev tooling license
+24,1,2026-06-26,2246.61,GPU cloud,Training run
+25,8,2026-01-23,484.7,software,API credits
+26,6,2026-10-14,417.6,software,Dev tooling license
+27,3,2026-11-04,1045.04,travel,Conference travel
+28,1,2026-08-17,478.81,GPU cloud,Training run
+29,3,2024-08-19,1435.6,GPU cloud,Batch eval run
+30,5,2025-08-14,2670.01,GPU cloud,Inference hosting
+31,6,2026-10-09,334.2,software,SaaS subscription
+32,8,2025-12-30,1098.99,travel,Client site visit
+33,8,2026-09-30,470.78,travel,Client site visit
+34,10,2026-07-31,2170.35,GPU cloud,Inference hosting
+35,13,2026-05-21,571.56,GPU cloud,Batch eval run
+36,1,2026-02-24,2147.67,GPU cloud,Batch eval run
+37,3,2025-09-15,54.0,software,SaaS subscription
+38,2,2026-10-25,170.41,software,SaaS subscription
+39,4,2025-04-11,1685.42,GPU cloud,Inference hosting
+40,10,2026-10-19,1472.62,data labeling,Vendor labeling invoice
+41,4,2026-06-30,315.72,software,SaaS subscription
+42,2,2026-10-13,87.21,software,Dev tooling license
+43,8,2026-03-17,482.36,software,SaaS subscription
+44,6,2026-10-08,329.42,software,Dev tooling license
+45,6,2026-11-04,178.17,travel,Conference travel
+46,5,2025-08-07,787.27,travel,Team offsite
+47,1,2026-02-20,1585.69,GPU cloud,Inference hosting
+48,13,2026-06-25,224.56,travel,Conference travel
+49,3,2026-03-24,433.19,software,API credits
+50,8,2026-11-05,867.09,travel,Client site visit
+51,1,2026-05-08,220.91,travel,Client site visit
+52,1,2026-07-16,2856.3,GPU cloud,Fine-tuning job
+53,13,2026-07-05,223.32,software,Dev tooling license
+54,4,2025-10-28,258.83,data labeling,Annotation batch
+55,7,2026-11-05,301.49,software,SaaS subscription
+56,7,2025-09-17,609.36,travel,Client site visit
+57,6,2026-09-30,463.82,software,API credits
+58,1,2026-03-24,1365.55,data labeling,Annotation batch
+59,1,2026-03-18,2164.2,GPU cloud,Batch eval run
+60,7,2025-10-08,693.08,travel,Client site visit
+61,8,2025-10-22,379.89,software,API credits
+62,10,2026-09-02,1095.32,data labeling,Vendor labeling invoice
+63,2,2026-10-29,238.49,software,SaaS subscription
+64,13,2026-05-04,325.23,travel,Conference travel
+65,2,2026-10-13,857.83,travel,Client site visit
+66,13,2026-10-31,323.31,GPU cloud,Training run
+67,13,2026-10-30,827.66,data labeling,Annotation batch
+68,10,2026-09-22,1101.05,GPU cloud,Fine-tuning job
+69,6,2026-09-30,294.34,software,Dev tooling license
+70,1,2026-09-15,824.92,GPU cloud,Training run
+71,8,2026-07-17,440.96,software,API credits
+72,1,2026-10-09,481.28,data labeling,QA pass on labels
+73,6,2026-10-05,196.77,software,Dev tooling license
+74,6,2026-10-19,23.06,software,SaaS subscription
+75,5,2025-09-17,513.74,travel,Client site visit
+76,8,2026-02-05,913.58,travel,Conference travel
+77,13,2026-04-30,2923.17,GPU cloud,Fine-tuning job
+78,2,2026-10-29,462.21,software,API credits
+79,2,2026-10-14,250.36,travel,Team offsite
+80,8,2025-11-07,304.11,software,API credits
+81,3,2025-07-07,1016.69,GPU cloud,Batch eval run
+82,7,2025-09-12,237.32,software,SaaS subscription
+83,5,2026-05-30,2383.82,GPU cloud,Training run
+84,4,2026-05-24,243.71,software,API credits
+85,5,2025-07-07,167.99,software,SaaS subscription
+86,2,2026-10-08,407.65,software,SaaS subscription
+87,7,2026-02-25,63.78,software,Dev tooling license
+88,1,2026-03-24,594.32,data labeling,Annotation batch
+89,8,2026-07-15,286.86,software,SaaS subscription
+90,2,2026-10-14,68.92,software,SaaS subscription
+91,1,2026-04-17,2525.04,GPU cloud,Inference hosting
+92,5,2026-07-16,198.68,software,Dev tooling license
+93,2,2026-10-10,765.42,travel,Client site visit
+94,5,2025-09-13,408.46,software,API credits
+95,1,2026-08-03,2787.57,GPU cloud,Batch eval run
+96,13,2026-05-18,1271.64,GPU cloud,Inference hosting
+97,6,2026-10-02,234.09,software,SaaS subscription
+98,6,2026-10-19,459.86,travel,Team offsite
+99,13,2026-07-01,445.62,GPU cloud,Inference hosting
+100,10,2026-10-06,1999.43,GPU cloud,Inference hosting
+101,1,2026-06-26,395.32,software,API credits
+102,13,2026-07-31,1834.09,data labeling,QA pass on labels
+103,8,2026-03-19,106.31,software,Dev tooling license
+104,5,2025-07-23,2708.14,GPU cloud,Training run
+105,13,2026-08-21,525.3,travel,Client site visit
+106,4,2025-12-05,894.0,GPU cloud,Fine-tuning job
+107,1,2026-03-23,1811.94,GPU cloud,Inference hosting
+108,6,2026-11-06,483.9,travel,Conference travel
+109,1,2026-10-09,1900.36,data labeling,Annotation batch
+110,5,2025-01-09,280.22,software,SaaS subscription
+111,5,2026-04-01,379.75,travel,Conference travel
+112,1,2026-04-07,1844.0,data labeling,Annotation batch
+113,7,2025-12-13,336.33,travel,Client site visit
+114,4,2026-04-20,2570.15,GPU cloud,Batch eval run
+115,2,2026-10-14,164.85,software,SaaS subscription
+116,10,2026-08-28,331.61,software,Dev tooling license
+117,5,2026-09-14,167.28,software,API credits
+118,3,2026-08-07,2240.73,GPU cloud,Batch eval run
+119,1,2026-11-03,1886.69,GPU cloud,Inference hosting
+120,2,2026-10-26,87.51,software,SaaS subscription
+121,2,2026-10-27,853.53,travel,Conference travel
+122,1,2026-01-28,498.4,data labeling,QA pass on labels
+123,6,2026-10-15,365.8,software,Dev tooling license
+124,8,2026-07-29,417.83,software,Dev tooling license
+125,5,2024-11-12,1463.6,GPU cloud,Fine-tuning job
+126,1,2026-02-16,596.14,data labeling,Annotation batch
+127,7,2026-07-30,446.21,software,SaaS subscription
+128,7,2026-05-25,1184.54,travel,Team offsite
+129,1,2026-03-19,472.37,software,Dev tooling license
+130,10,2026-09-11,349.96,GPU cloud,Inference hosting
+131,5,2026-04-15,354.65,software,API credits
+132,6,2026-10-28,134.02,software,API credits
+133,4,2026-06-14,1210.32,GPU cloud,Batch eval run
+134,5,2025-04-01,272.06,GPU cloud,Fine-tuning job
+135,2,2026-11-05,425.01,software,API credits
+136,6,2026-10-21,328.1,software,SaaS subscription
+137,6,2026-10-07,243.23,software,API credits
+138,1,2026-02-12,2306.26,GPU cloud,Training run
+139,7,2026-09-11,584.69,travel,Client site visit
+140,1,2026-07-27,412.83,software,Dev tooling license
+141,13,2026-07-24,1075.74,travel,Conference travel
+142,2,2026-10-08,453.33,software,Dev tooling license
+143,4,2026-07-06,2857.91,GPU cloud,Inference hosting
+144,4,2025-08-10,1636.08,data labeling,Annotation batch
+145,10,2026-10-19,2992.35,GPU cloud,Inference hosting
+146,6,2026-09-27,457.19,software,Dev tooling license
+147,8,2026-02-25,492.43,travel,Team offsite
+148,13,2026-08-31,2402.34,GPU cloud,Batch eval run
+149,3,2024-11-29,91.83,software,SaaS subscription
+150,2,2026-10-28,436.39,software,API credits
+151,6,2026-10-29,334.3,software,Dev tooling license
+152,13,2026-07-06,682.16,GPU cloud,Inference hosting
+153,8,2026-03-25,209.98,software,Dev tooling license
+154,6,2026-09-24,377.96,software,API credits
+155,7,2026-06-03,154.57,software,Dev tooling license
+156,2,2026-11-03,84.51,software,API credits
+157,6,2026-11-03,587.61,travel,Client site visit
+158,5,2024-12-05,121.47,software,Dev tooling license
+159,4,2026-09-03,1071.14,GPU cloud,Batch eval run
+160,3,2024-09-17,1073.3,travel,Client site visit
+161,5,2025-06-21,2543.53,GPU cloud,Training run
+162,8,2026-04-13,359.07,travel,Conference travel
+163,13,2026-05-25,325.0,software,API credits
+164,13,2026-11-02,618.41,travel,Conference travel
+165,7,2025-10-07,98.49,software,Dev tooling license
+166,2,2026-10-09,33.18,software,SaaS subscription
+167,5,2026-09-02,2012.66,GPU cloud,Inference hosting
+168,6,2026-09-24,579.98,travel,Team offsite
+169,1,2026-03-23,457.53,software,Dev tooling license
+170,1,2026-05-14,906.69,GPU cloud,Batch eval run

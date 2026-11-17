@@ -1,0 +1,15 @@
+project_id,name,client_name,category,budget,start_date,status
+1,Lakeside Physical Therapy Knowledge Base Copilot,Lakeside Physical Therapy,LLM app,119055.09,2025-12-25,active
+2,Internal Hiring Dashboard,,internal tool,37673.02,2026-10-06,done
+3,Pinecrest Dental Group Support Chatbot,Pinecrest Dental Group,LLM app,34542.8,2024-08-19,paused
+4,Northside Veterinary CRM Data Sync,Northside Veterinary,data pipeline,134141.25,2025-04-03,paused
+5,Brightline Tutoring Sales Assistant,Brightline Tutoring,LLM app,147137.98,2024-10-09,active
+6,Internal Billing Tool,,internal tool,13772.82,2026-09-23,active
+7,Internal QA Dashboard,,internal tool,17951.7,2025-01-16,active
+8,Internal Expense Tool,,internal tool,38930.89,2025-10-07,done
+9,Internal Onboarding Portal,,internal tool,31897.93,2027-01-02,planned
+10,Chen Family Orthodontics Intake Chatbot,Chen Family Orthodontics,LLM app,60523.12,2026-07-31,done
+11,Internal Time Tracker,,internal tool,21202.62,2026-12-26,planned
+12,Internal Project Tracker,,internal tool,13630.13,2026-12-13,planned
+13,Coastal Coffee Roasters Support Chatbot,Coastal Coffee Roasters,LLM app,92009.8,2026-03-25,active
+14,Internal Client Health Dashboard,,internal tool,10215.73,2025-03-13,active

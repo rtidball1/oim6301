@@ -1,0 +1,281 @@
+task_id,project_id,description,created_date,assigned_to,due_date,completed_date
+1,14,Implement authentication,2026-01-15,2,2026-01-29,2026-01-28
+2,7,Set up CI pipeline,2026-06-03,24,2026-06-17,2026-06-08
+3,7,Write integration tests,2025-04-21,4,2025-05-17,2025-05-03
+4,6,Scope follow-on phase,2026-10-23,6,2026-11-11,
+5,14,Label training examples,2026-04-10,5,2026-04-19,2026-04-10
+6,10,Create demo for client,2026-08-28,6,2026-09-18,2026-09-04
+7,3,Refactor data ingestion script,2026-10-01,15,2026-10-29,
+8,14,Prepare weekly status report,2026-06-12,23,2026-07-02,2026-07-06
+9,6,Sync with client stakeholders,2026-10-26,9,2026-11-08,
+10,6,Refactor data ingestion script,2026-10-08,10,2026-10-30,2026-10-12
+11,10,Write API documentation,2026-09-11,21,2026-09-17,2026-09-24
+12,1,Refactor data ingestion script,2026-10-15,2,2026-10-31,2026-10-27
+13,14,Clean duplicate records,2026-09-23,5,2026-10-13,2026-10-06
+14,1,Design database schema,2026-07-20,24,2026-07-29,
+15,1,Write API documentation,2026-07-14,2,2026-07-21,2026-07-19
+16,7,Review model outputs for quality,2025-08-20,4,2025-09-18,
+17,10,Conduct user interview,2026-09-01,21,2026-09-06,2026-09-02
+18,5,Prepare weekly status report,2026-08-05,,2026-08-30,2026-08-06
+19,5,Implement authentication,2024-10-29,1,2024-11-07,2024-11-01
+20,5,Deploy to staging,2026-01-28,3,2026-02-07,2026-02-02
+21,2,Draft client onboarding doc,2026-10-07,22,2026-11-02,2026-10-19
+22,6,Implement authentication,2026-09-29,10,2026-10-25,2026-10-06
+23,1,Clean duplicate records,2026-07-02,,2026-07-27,2026-07-28
+24,2,Build ETL for client data,2026-11-02,23,2026-11-21,2026-11-05
+25,14,Implement authentication,2026-09-15,8,2026-10-03,
+26,6,Prepare weekly status report,2026-10-13,6,2026-10-26,
+27,13,Build ETL for client data,2026-08-17,18,2026-09-01,2026-08-27
+28,13,Design database schema,2026-05-18,12,2026-06-02,2026-05-26
+29,1,Design database schema,2026-09-15,3,2026-09-27,2026-09-30
+30,6,Draft client onboarding doc,2026-11-06,15,2026-11-25,
+31,6,Conduct user interview,2026-10-07,9,2026-10-21,2026-10-23
+32,10,Review model outputs for quality,2026-11-03,21,2026-11-30,2026-11-05
+33,5,Sync with client stakeholders,2025-08-28,,2025-09-19,
+34,5,Optimize inference latency,2025-04-23,3,2025-05-06,2025-05-09
+35,6,Set up evaluation harness,2026-09-29,10,2026-10-11,2026-10-08
+36,14,Label training examples,2025-05-07,6,2025-05-16,2025-05-22
+37,1,Review model outputs for quality,2026-10-14,24,2026-11-02,2026-10-15
+38,13,Write unit tests for parser,2026-04-23,12,2026-05-13,2026-05-13
+39,1,Label training examples,2026-03-12,21,2026-03-26,2026-03-19
+40,14,Write API documentation,2026-05-13,22,2026-05-25,
+41,10,Write integration tests,2026-09-25,6,2026-10-13,2026-10-14
+42,2,Build ETL for client data,2026-10-19,13,2026-11-14,2026-10-26
+43,14,Deploy to staging,2025-05-28,5,2025-06-16,2025-06-12
+44,1,Draft client onboarding doc,2026-04-22,8,2026-05-19,
+45,5,Tune prompt templates,2025-04-29,1,2025-05-24,2025-05-16
+46,2,Deploy to staging,2026-10-09,13,2026-11-02,2026-10-27
+47,10,Draft client onboarding doc,2026-09-07,21,2026-09-28,2026-10-05
+48,1,Write unit tests for parser,2026-08-03,12,2026-08-08,2026-08-03
+49,6,Set up CI pipeline,2026-10-29,,2026-11-27,
+50,10,Set up monitoring dashboard,2026-09-04,6,2026-09-22,2026-09-14
+51,2,Design database schema,2026-10-16,23,2026-11-05,2026-10-28
+52,1,Set up CI pipeline,2026-08-14,,2026-08-27,2026-08-26
+53,1,Fix data pipeline bug,2026-09-28,2,2026-10-09,2026-09-29
+54,6,Clean duplicate records,2026-10-28,10,2026-11-16,
+55,3,Set up evaluation harness,2024-09-17,1,2024-10-14,2024-10-22
+56,14,Scope follow-on phase,2026-05-04,,2026-05-12,2026-05-07
+57,4,Clean duplicate records,2026-08-26,8,2026-09-16,2026-09-21
+58,13,Refactor data ingestion script,2026-05-26,2,2026-06-12,2026-06-03
+59,7,Implement authentication,2026-06-19,25,2026-07-03,2026-07-07
+60,13,Design database schema,2026-11-01,12,2026-11-16,
+61,8,Write integration tests,2026-05-28,21,2026-06-24,2026-06-23
+62,7,Scope follow-on phase,2026-05-15,4,2026-06-01,
+63,4,Draft client onboarding doc,2026-06-27,3,2026-07-25,2026-07-06
+64,13,Write unit tests for parser,2026-06-19,25,2026-07-14,2026-07-10
+65,14,Clean duplicate records,2026-04-06,23,2026-05-03,
+66,14,Prepare weekly status report,2025-04-18,1,2025-05-13,2025-05-06
+67,2,Create demo for client,2026-11-02,25,2026-11-27,2026-11-02
+68,4,Deploy to staging,2026-02-03,3,2026-02-18,
+69,7,Optimize inference latency,2026-02-03,4,2026-02-24,2026-02-27
+70,6,Create demo for client,2026-10-02,10,2026-10-21,2026-10-02
+71,6,Implement authentication,2026-11-05,6,2026-11-24,
+72,7,Clean duplicate records,2025-09-29,4,2025-10-10,
+73,2,Set up evaluation harness,2026-10-21,13,2026-11-13,2026-10-30
+74,8,Optimize inference latency,2026-02-24,,2026-03-22,2026-02-27
+75,13,Review model outputs for quality,2026-05-22,12,2026-06-03,2026-06-10
+76,3,Write integration tests,2026-05-24,1,2026-06-07,
+77,8,Fix data pipeline bug,2026-10-16,21,2026-10-31,2026-10-21
+78,3,Review model outputs for quality,2026-11-02,10,2026-11-23,
+79,4,Label training examples,2025-12-22,23,2026-01-21,2026-01-12
+80,13,Design database schema,2026-04-13,2,2026-05-09,2026-05-08
+81,8,Write unit tests for parser,2025-10-14,21,2025-11-02,2025-11-06
+82,6,Set up evaluation harness,2026-10-30,10,2026-11-07,2026-11-06
+83,14,Sync with client stakeholders,2026-02-11,5,2026-03-08,2026-03-12
+84,7,Deploy to staging,2026-03-10,,2026-03-16,
+85,13,Conduct user interview,2026-04-23,,2026-05-15,2026-05-22
+86,14,Optimize inference latency,2025-08-18,6,2025-08-26,
+87,10,Prepare weekly status report,2026-09-04,,2026-09-20,2026-09-18
+88,8,Write integration tests,2025-11-26,22,2025-12-18,2025-12-18
+89,8,Scope follow-on phase,2026-02-25,21,2026-03-16,2026-03-03
+90,1,Fix data pipeline bug,2026-01-19,3,2026-01-28,
+91,2,Optimize inference latency,2026-10-19,25,2026-10-31,2026-10-23
+92,1,Label training examples,2026-05-15,3,2026-05-24,2026-05-20
+93,1,Implement authentication,2026-03-02,,2026-04-01,
+94,7,Clean duplicate records,2025-03-10,4,2025-03-31,2025-03-14
+95,10,Write integration tests,2026-10-14,,2026-11-04,2026-11-02
+96,14,Write API documentation,2026-01-15,1,2026-01-21,
+97,10,Draft client onboarding doc,2026-10-26,,2026-11-22,2026-10-27
+98,7,Set up CI pipeline,2026-09-30,24,2026-10-13,2026-10-19
+99,6,Label training examples,2026-10-22,15,2026-10-30,
+100,14,Write unit tests for parser,2025-06-18,5,2025-07-14,2025-06-27
+101,13,Conduct user interview,2026-04-11,,2026-04-29,2026-05-04
+102,3,Refactor data ingestion script,2026-03-11,,2026-04-02,2026-03-18
+103,7,Set up CI pipeline,2026-03-25,25,2026-04-08,2026-04-05
+104,5,Implement authentication,2025-05-26,3,2025-06-17,2025-06-12
+105,5,Sync with client stakeholders,2025-12-22,1,2026-01-15,
+106,6,Tune prompt templates,2026-09-24,10,2026-10-09,2026-09-29
+107,14,Draft client onboarding doc,2026-04-27,,2026-05-25,2026-04-28
+108,14,Optimize inference latency,2026-03-26,6,2026-04-24,
+109,2,Refactor data ingestion script,2026-10-09,25,2026-11-02,2026-10-30
+110,13,Label training examples,2026-08-27,12,2026-09-07,
+111,7,Write integration tests,2026-04-01,,2026-04-27,2026-04-20
+112,5,Deploy to staging,2025-11-17,1,2025-11-22,2025-11-25
+113,7,Draft client onboarding doc,2025-05-18,4,2025-05-27,2025-05-29
+114,8,Set up monitoring dashboard,2026-10-21,,2026-10-26,2026-10-23
+115,14,Write API documentation,2026-05-26,23,2026-06-20,2026-06-02
+116,1,Conduct user interview,2026-06-09,12,2026-06-28,
+117,2,Draft client onboarding doc,2026-11-02,4,2026-11-20,2026-11-06
+118,8,Conduct user interview,2026-01-28,21,2026-02-04,2026-02-03
+119,7,Build ETL for client data,2025-09-14,4,2025-10-08,2025-09-18
+120,13,Implement authentication,2026-07-21,25,2026-08-16,
+121,7,Review model outputs for quality,2026-10-20,25,2026-10-27,2026-10-29
+122,1,Conduct user interview,2026-06-23,8,2026-07-12,2026-06-24
+123,6,Benchmark model versions,2026-09-28,18,2026-10-15,2026-10-15
+124,1,Tune prompt templates,2026-08-12,11,2026-08-27,2026-08-28
+125,1,Draft client onboarding doc,2026-08-12,,2026-08-27,
+126,13,Write unit tests for parser,2026-05-27,12,2026-06-17,2026-06-17
+127,1,Benchmark model versions,2026-06-14,,2026-07-10,2026-06-30
+128,4,Deploy to staging,2026-03-10,,2026-04-05,2026-04-01
+129,8,Set up monitoring dashboard,2025-12-12,21,2025-12-26,2026-01-01
+130,3,Draft client onboarding doc,2026-07-06,13,2026-08-01,
+131,10,Fix data pipeline bug,2026-09-15,9,2026-09-30,2026-09-30
+132,5,Benchmark model versions,2025-02-26,3,2025-03-28,2025-04-01
+133,14,Build ETL for client data,2025-07-25,1,2025-08-04,2025-08-13
+134,10,Prepare weekly status report,2026-08-05,21,2026-08-24,2026-08-19
+135,14,Deploy to staging,2025-11-12,8,2025-11-23,2025-11-26
+136,8,Label training examples,2026-08-12,22,2026-08-18,2026-08-28
+137,6,Tune prompt templates,2026-09-28,10,2026-10-17,
+138,10,Set up evaluation harness,2026-08-11,21,2026-08-30,2026-09-09
+139,10,Set up monitoring dashboard,2026-08-06,6,2026-08-18,2026-08-06
+140,2,Sync with client stakeholders,2026-10-27,4,2026-11-02,2026-11-03
+141,3,Fix data pipeline bug,2026-10-05,13,2026-10-29,2026-10-10
+142,4,Write integration tests,2026-10-16,23,2026-11-06,2026-10-19
+143,6,Optimize inference latency,2026-10-19,18,2026-11-07,2026-11-03
+144,14,Prepare weekly status report,2026-10-22,5,2026-11-05,2026-11-02
+145,14,Set up CI pipeline,2026-05-13,23,2026-05-20,2026-05-24
+146,14,Write API documentation,2026-08-14,14,2026-09-05,2026-09-13
+147,8,Label training examples,2026-02-13,22,2026-03-15,2026-03-25
+148,7,Scope follow-on phase,2025-06-01,4,2025-06-30,2025-07-01
+149,5,Write integration tests,2025-02-24,,2025-03-25,
+150,6,Set up monitoring dashboard,2026-10-05,,2026-10-16,
+151,7,Conduct user interview,2025-07-30,4,2025-08-24,2025-08-06
+152,10,Set up CI pipeline,2026-09-18,9,2026-10-08,2026-09-29
+153,6,Set up monitoring dashboard,2026-09-28,6,2026-10-16,2026-10-07
+154,2,Optimize inference latency,2026-11-02,21,2026-11-18,2026-11-04
+155,10,Conduct user interview,2026-09-04,9,2026-09-11,2026-09-16
+156,13,Write integration tests,2026-10-16,9,2026-10-21,2026-10-30
+157,3,Write unit tests for parser,2026-06-10,10,2026-07-03,2026-06-19
+158,10,Write API documentation,2026-09-16,9,2026-10-09,2026-10-09
+159,7,Set up CI pipeline,2025-10-28,4,2025-11-02,2025-11-12
+160,8,Fix data pipeline bug,2026-07-21,,2026-08-19,2026-08-18
+161,6,Draft client onboarding doc,2026-11-06,15,2026-11-17,
+162,10,Design database schema,2026-09-25,6,2026-10-10,2026-10-17
+163,6,Prepare weekly status report,2026-10-12,9,2026-11-11,
+164,3,Design database schema,2025-03-12,1,2025-04-11,2025-04-04
+165,14,Draft client onboarding doc,2026-03-25,22,2026-04-03,2026-03-27
+166,7,Implement authentication,2026-02-27,4,2026-03-20,2026-03-25
+167,2,Conduct user interview,2026-10-14,23,2026-10-21,2026-10-30
+168,3,Tune prompt templates,2026-10-26,15,2026-11-05,
+169,10,Sync with client stakeholders,2026-08-07,21,2026-08-21,2026-08-17
+170,5,Review model outputs for quality,2026-03-24,1,2026-04-06,2026-04-10
+171,3,Implement authentication,2026-05-21,1,2026-06-11,2026-06-11
+172,1,Review model outputs for quality,2026-01-08,,2026-02-02,
+173,5,Clean duplicate records,2026-07-25,12,2026-08-19,
+174,6,Build ETL for client data,2026-11-05,15,2026-11-12,
+175,10,Sync with client stakeholders,2026-09-22,9,2026-10-07,2026-10-02
+176,7,Tune prompt templates,2025-05-29,4,2025-06-13,2025-06-05
+177,2,Set up monitoring dashboard,2026-10-09,21,2026-11-02,2026-10-14
+178,14,Create demo for client,2026-01-27,5,2026-02-16,
+179,13,Set up CI pipeline,2026-11-05,2,2026-11-12,
+180,13,Optimize inference latency,2026-05-25,12,2026-05-31,2026-06-09
+181,13,Benchmark model versions,2026-10-27,,2026-11-05,
+182,8,Fix data pipeline bug,2026-11-02,9,2026-11-19,2026-11-06
+183,8,Optimize inference latency,2026-07-17,22,2026-08-07,2026-08-03
+184,3,Tune prompt templates,2025-09-26,10,2025-10-18,
+185,5,Create demo for client,2026-06-17,1,2026-06-23,2026-07-03
+186,4,Benchmark model versions,2026-09-12,8,2026-09-22,2026-10-01
+187,7,Conduct user interview,2026-09-15,4,2026-10-07,2026-09-16
+188,7,Sync with client stakeholders,2025-05-08,4,2025-06-07,
+189,1,Build ETL for client data,2026-10-26,11,2026-11-23,2026-11-02
+190,14,Label training examples,2026-04-06,23,2026-04-18,2026-04-28
+191,5,Sync with client stakeholders,2024-10-28,3,2024-11-06,2024-10-29
+192,3,Create demo for client,2025-07-17,10,2025-08-07,2025-07-28
+193,14,Write unit tests for parser,2026-02-26,23,2026-03-27,
+194,6,Deploy to staging,2026-10-08,10,2026-10-20,
+195,6,Write API documentation,2026-10-23,10,2026-11-06,2026-11-04
+196,7,Scope follow-on phase,2025-11-06,4,2025-11-22,
+197,6,Sync with client stakeholders,2026-10-23,18,2026-11-05,
+198,6,Write integration tests,2026-10-01,,2026-10-29,2026-10-16
+199,14,Label training examples,2025-10-30,1,2025-11-07,2025-11-14
+200,3,Deploy to staging,2025-01-27,1,2025-02-16,2025-02-20
+201,7,Benchmark model versions,2025-11-04,4,2025-11-29,2025-12-08
+202,1,Write API documentation,2026-03-24,3,2026-03-30,
+203,13,Set up monitoring dashboard,2026-05-11,12,2026-05-17,2026-05-14
+204,6,Tune prompt templates,2026-10-22,18,2026-11-12,
+205,13,Scope follow-on phase,2026-07-22,2,2026-08-06,2026-08-05
+206,6,Build ETL for client data,2026-10-14,18,2026-11-09,
+207,8,Tune prompt templates,2026-05-13,21,2026-05-30,2026-05-18
+208,13,Review model outputs for quality,2026-06-15,2,2026-06-28,2026-06-29
+209,7,Label training examples,2025-11-21,4,2025-12-04,2025-12-12
+210,13,Conduct user interview,2026-06-11,18,2026-07-08,2026-06-29
+211,5,Conduct user interview,2025-05-21,3,2025-05-30,2025-06-09
+212,10,Draft client onboarding doc,2026-10-28,21,2026-11-26,2026-11-06
+213,14,Build ETL for client data,2026-03-18,,2026-04-10,2026-03-27
+214,7,Set up CI pipeline,2026-07-02,25,2026-07-29,2026-07-07
+215,10,Create demo for client,2026-08-07,6,2026-08-26,2026-08-24
+216,7,Benchmark model versions,2025-02-07,,2025-02-24,2025-02-07
+217,5,Draft client onboarding doc,2026-05-24,1,2026-06-15,
+218,13,Conduct user interview,2026-04-02,2,2026-05-01,2026-04-28
+219,8,Label training examples,2026-09-21,22,2026-09-30,2026-10-02
+220,5,Design database schema,2024-11-01,3,2024-11-27,2024-11-28
+221,8,Optimize inference latency,2026-04-02,21,2026-04-30,2026-04-28
+222,1,Prepare weekly status report,2026-04-27,2,2026-05-21,2026-04-30
+223,1,Benchmark model versions,2026-01-22,8,2026-02-03,
+224,14,Write unit tests for parser,2026-02-02,23,2026-02-17,2026-02-06
+225,14,Build ETL for client data,2025-12-19,,2026-01-11,
+226,10,Clean duplicate records,2026-10-06,21,2026-10-24,2026-10-23
+227,6,Design database schema,2026-10-07,9,2026-11-06,2026-11-02
+228,14,Create demo for client,2025-07-28,5,2025-08-08,2025-07-30
+229,8,Draft client onboarding doc,2026-01-12,,2026-01-29,2026-01-31
+230,5,Set up monitoring dashboard,2026-06-02,3,2026-06-22,2026-07-01
+231,7,Benchmark model versions,2025-01-31,,2025-02-11,
+232,3,Fix data pipeline bug,2026-09-22,13,2026-10-04,2026-10-14
+233,8,Conduct user interview,2026-02-06,22,2026-02-23,2026-02-26
+234,7,Set up monitoring dashboard,2025-10-10,4,2025-10-29,2025-11-05
+235,5,Benchmark model versions,2025-10-23,1,2025-11-15,
+236,4,Prepare weekly status report,2026-06-04,6,2026-06-19,2026-06-22
+237,13,Clean duplicate records,2026-08-12,18,2026-08-25,
+238,13,Clean duplicate records,2026-07-20,18,2026-07-30,2026-08-06
+239,5,Write unit tests for parser,2026-04-17,1,2026-05-08,2026-04-21
+240,1,Create demo for client,2026-04-22,,2026-05-01,2026-05-08
+241,8,Design database schema,2025-11-06,21,2025-12-02,2025-11-06
+242,14,Set up evaluation harness,2026-05-08,,2026-05-29,2026-05-26
+243,13,Build ETL for client data,2026-10-19,18,2026-11-18,
+244,2,Conduct user interview,2026-10-12,4,2026-10-23,2026-10-20
+245,6,Sync with client stakeholders,2026-10-18,15,2026-11-10,
+246,5,Scope follow-on phase,2025-08-12,1,2025-09-06,
+247,1,Sync with client stakeholders,2026-02-10,11,2026-03-04,2026-02-10
+248,4,Implement authentication,2025-06-26,6,2025-07-21,
+249,2,Review model outputs for quality,2026-10-20,25,2026-11-16,2026-11-04
+250,1,Implement authentication,2026-10-09,8,2026-10-24,2026-10-15
+251,4,Write API documentation,2026-05-15,8,2026-05-25,2026-06-02
+252,14,Set up monitoring dashboard,2026-03-02,,2026-03-20,2026-03-04
+253,8,Build ETL for client data,2026-08-27,21,2026-09-16,2026-09-09
+254,8,Tune prompt templates,2025-11-19,22,2025-12-19,2025-11-23
+255,8,Label training examples,2026-10-06,9,2026-11-03,2026-10-29
+256,2,Tune prompt templates,2026-10-06,21,2026-10-22,2026-10-09
+257,2,Write API documentation,2026-10-07,,2026-10-29,2026-10-27
+258,1,Write unit tests for parser,2026-02-06,21,2026-02-18,2026-02-11
+259,8,Refactor data ingestion script,2026-01-01,22,2026-01-14,2026-01-09
+260,7,Benchmark model versions,2026-05-26,4,2026-06-08,
+261,13,Write API documentation,2026-08-24,18,2026-09-01,2026-08-24
+262,7,Optimize inference latency,2026-10-13,25,2026-11-01,2026-11-02
+263,3,Set up monitoring dashboard,2026-07-31,10,2026-08-10,
+264,6,Write API documentation,2026-11-06,18,2026-12-06,
+265,6,Design database schema,2026-10-29,18,2026-11-08,
+266,1,Sync with client stakeholders,2026-08-18,11,2026-09-06,
+267,2,Refactor data ingestion script,2026-10-14,4,2026-10-27,2026-11-05
+268,8,Sync with client stakeholders,2025-11-13,22,2025-12-06,2025-12-15
+269,10,Design database schema,2026-10-08,,2026-10-24,2026-11-02
+270,2,Scope follow-on phase,2026-10-12,23,2026-11-07,2026-10-30
+271,8,Sync with client stakeholders,2026-10-27,21,2026-11-04,2026-11-05
+272,14,Refactor data ingestion script,2026-04-17,23,2026-05-10,2026-05-05
+273,2,Create demo for client,2026-10-13,23,2026-10-22,2026-10-23
+274,5,Set up monitoring dashboard,2026-03-26,3,2026-04-03,2026-04-09
+275,2,Build ETL for client data,2026-10-25,2,2026-11-09,2026-11-04
+276,6,Create demo for client,2026-10-26,9,2026-11-10,
+277,5,Set up evaluation harness,2025-11-27,1,2025-12-22,2025-12-22
+278,5,Implement authentication,2026-01-12,3,2026-01-17,2026-01-14
+279,2,Set up monitoring dashboard,2026-10-22,21,2026-11-12,
+280,8,Optimize inference latency,2025-12-04,22,2025-12-28,2025-12-23

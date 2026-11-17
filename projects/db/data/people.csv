@@ -1,0 +1,26 @@
+person_id,first_name,last_name,work_email,title,start_date,manager_id
+1,Mason,Nguyen,mason.nguyen@babsonailabs.com,Co-Founder & CEO,2024-06-01,
+2,Henry,Brown,henry.brown@babsonailabs.com,Co-Founder & CTO,2024-06-01,
+3,Isabella,Rivera,isabella.rivera@babsonailabs.com,Engineering Lead,2024-08-27,1
+4,Lily,Patel,lily.patel@babsonailabs.com,Data Lead,2025-02-14,2
+5,Matthew,Smith,matthew.smith@babsonailabs.com,Product Lead,2024-11-29,1
+6,Ethan,Kim,ethan.kim@babsonailabs.com,Client Success Lead,2024-07-08,2
+7,Lily,Hall,lily.hall@babsonailabs.com,Founding Engineer,2026-01-26,2
+8,Henry,Cooper,henry.cooper@babsonailabs.com,Customer Success Associate,2025-10-03,2
+9,Matthew,Lee,matthew.lee@babsonailabs.com,ML Engineer,2026-08-17,1
+10,Jack,Garcia,jack.garcia@babsonailabs.com,Founding Engineer,2025-03-04,3
+11,Ella,Cox,ella.cox@babsonailabs.com,Data Engineer,2025-07-25,1
+12,Ethan,Wright,ethan.wright@babsonailabs.com,QA Engineer,2026-03-29,3
+13,Owen,Torres,owen.torres@babsonailabs.com,Customer Success Associate,2026-07-01,3
+14,Emma,Murphy,emma.murphy@babsonailabs.com,Data Engineer,2026-06-22,2
+15,Ethan,Cox,ethan.cox@babsonailabs.com,Data Scientist,2026-08-31,2
+16,Owen,Johnson,owen.johnson@babsonailabs.com,Software Engineer,2025-10-08,2
+17,Henry,Cook,henry.cook@babsonailabs.com,Founding Engineer,2025-09-24,3
+18,Mia,Wright,mia.wright@babsonailabs.com,Data Engineer,2026-06-01,6
+19,Samuel,Perez,samuel.perez@babsonailabs.com,ML Engineer,2025-04-14,6
+20,Harper,Murphy,harper.murphy@babsonailabs.com,Business Analyst,2026-07-13,3
+21,Emma,Cooper,emma.cooper@babsonailabs.com,Founding Engineer,2024-11-22,3
+22,Ava,Kim,ava.kim@babsonailabs.com,Data Scientist,2025-11-10,3
+23,Benjamin,Rivera,benjamin.rivera@babsonailabs.com,ML Engineer,2025-09-26,5
+24,Matthew,Howard,matthew.howard@babsonailabs.com,Data Scientist,2026-07-03,5
+25,Harper,Chen,harper.chen@babsonailabs.com,Product Designer,2026-02-10,5
