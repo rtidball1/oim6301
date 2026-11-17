@@ -379,36 +379,38 @@ def _(mo):
 # CELL: tasks-by-weekday chart
 # ----------------------------------------------------------------------------
 # Reads tasks.csv straight into a polars DataFrame (independent of the
-# database), runs a SQL GROUP BY on it directly, and bar-charts the result
-# in Monday-Sunday order.
+# database) and groups it by the weekday name of created_date, then
+# bar-charts the result in Monday-Sunday order.
+# ----------------------------------------------------------------------------
+# FIXED 2026-11-16, after actually running this notebook for the first
+# time: this cell originally ran the group-by as SQL, through
+# duckdb.sql("... FROM _tasks ..."), relying on DuckDB's "replacement
+# scan" feature, which auto-detects a local Python variable matching a
+# table name by inspecting the calling stack frame. That trick works in
+# a plain script or a Jupyter cell, but it failed here with "Catalog
+# Error: Table with name _tasks does not exist!" the first time this was
+# actually run in marimo -- marimo renames underscore-prefixed variables
+# internally to keep them private to their own cell, so the actual
+# runtime variable DuckDB's frame inspection went looking for wasn't
+# literally named `_tasks` anymore, even though the source still reads
+# that way. Doing the group-by in plain polars instead sidesteps that
+# fragile mechanism entirely, and a single-table group-by this simple
+# never needed SQL in the first place.
 # ============================================================================
 @app.cell
-def _(_tasks, duckdb, mo, pl, plt):
-    # the assignment asks for this one read to go through polars rather than
-    # the database -- but the grouping itself is still a SQL GROUP BY:
-    # duckdb.sql() can query a local polars dataframe directly by name.
-    # `_tasks` appears in this cell's own parameter list above because
-    # DuckDB's SQL engine resolves `FROM _tasks` in the query string below
-    # by looking for a Python variable of that name in this cell's scope --
-    # marimo's dependency tracker picks up on that reference inside the SQL
-    # string, even though (as the very next line shows) this same cell is
-    # also what defines `_tasks`, fresh from the CSV, every time it runs.
+def _(mo, pl, plt):
     _tasks = pl.read_csv(mo.notebook_dir() / "data" / "tasks.csv", try_parse_dates=True)
-    # Counts rows per weekday name (e.g. "Monday"), querying the polars
-    # DataFrame above as though it were a SQL table literally named
-    # `_tasks`.
-    _counts = duckdb.sql(
-        """
-        SELECT strftime(created_date, '%A') AS weekday, count(*) AS n
-        FROM _tasks
-        GROUP BY weekday
-        """
-    ).pl()
-    # Converts the two parallel columns of the query result into a single
+    # Counts rows per weekday name (e.g. "Monday"), in polars rather than SQL.
+    _counts = (
+        _tasks.with_columns(pl.col("created_date").dt.strftime("%A").alias("weekday"))
+        .group_by("weekday")
+        .agg(pl.len().alias("n"))
+    )
+    # Converts the two parallel columns of the result into a single
     # {weekday_name: count} lookup.
     _by_day = dict(zip(_counts["weekday"].to_list(), _counts["n"].to_list()))
-    # Fixes the display order Monday through Sunday -- GROUP BY alone would
-    # leave the weekdays in whatever order DuckDB happens to return them.
+    # Fixes the display order Monday through Sunday -- group_by alone would
+    # leave the weekdays in whatever order polars happens to return them.
     _order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     # Looks up each weekday's count in that order, defaulting to 0 for any
     # weekday with no tasks created on it at all.
