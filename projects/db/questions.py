@@ -669,6 +669,21 @@ def _(mo):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(r"""
+    I predict the raw join will produce approximately 46 rows. The first
+    join is guaranteed to produce exactly 23 rows, one per person who has
+    a manager, since manager_id matches a unique person_id with no
+    fan-out. The second join is where the count can grow past 23, because
+    a report staffed on more than one project adds more than one row. I'm
+    assuming each of the 23 reports has roughly 2 assignments on average,
+    close to the overall average of 57 assignments divided by 25 people,
+    about 2.3, so I estimate roughly 23 times 2, about 46 rows total.
+    """)
+    return
+
+
 # ============================================================================
 # Going Further
 # ============================================================================
