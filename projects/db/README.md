@@ -52,7 +52,7 @@ erDiagram
     int person_id PK, FK
     int project_id PK, FK
     string role
-    decimal hours_per_week
+    int hours_per_week
     date date_joined
   }
   TASKS {
@@ -84,7 +84,7 @@ erDiagram
 
 # Design Choices
 
-**The key I chose where the business already had one.** `person_id` is the primary key for people, not `work_email`, even though the business already uses work email as an identifier. Work emails change whenever somebody changes title, so they aren't stable — every task, assignment, and expense tied to that person would become ambiguous the moment their title changed. An invented `person_id` stays constant for as long as the person works here, so `work_email` is kept as a plain attribute instead.
+**The key I chose where the business already had one.** `person_id` is the primary key for people, not `work_email`, even though the business already uses work email as an identifier. Work emails change whenever somebody changes title. Using a stable `person_id` keeps task and assignment references intact when an email changes. Expenses reference projects directly. The current work email is stored separately and must be unique.
 
 **Which relationships are optional.** `people.manager_id` is optional because the two founders report to nobody, and `tasks.assigned_to` is optional because a new task may be unassigned. Both are nullable foreign keys for exactly that reason.
 

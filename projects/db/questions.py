@@ -8,30 +8,17 @@ app = marimo.App(width="medium")
 def _():
     import duckdb
     import marimo as mo
+    import polars as pl
     import matplotlib.pyplot as plt
     from datetime import date
 
-    return date, duckdb, mo, plt
+    return date, duckdb, mo, pl, plt
 
 
 @app.cell
 def _(mo):
     mo.md(r"""
     # BabsonAI Labs — Business Questions (Part B)
-
-    **Scaffold note (delete this cell once you've read it):** Claude built
-    most of this notebook on 2026-11-16, working from `build.py` /
-    `make_data.py` in this same folder. The `ask()` helper, the `as_of`
-    date, and the SQL for all 10 questions below were written and
-    cross-checked two independent ways (SQL reasoning against the schema,
-    and a plain-Python recomputation straight from the CSVs) — see the
-    chat for details. What's still yours to do, marked **YOUR TURN**
-    below: swap the two "own question" placeholders if you'd rather ask
-    something else, write "How I Know..." in your own words around the
-    checks, write "Working With the Agent" honestly, do the "Reading It
-    Back" prediction *before* looking at that section's query result (and
-    commit it first, per the assignment), fill in "Going Further" if you
-    extend the one chart already here, and put in "Time Spent."
 
     This notebook reads `database.duckdb` through its own `ask()`, a copy
     of the one in `build.py` — never writes to it.
@@ -141,43 +128,33 @@ def _(mo):
 
 @app.cell
 def _(ask):
-    ask("""
+    active_hours = ask("""
         SELECT
             p.person_id,
             p.first_name || ' ' || p.last_name AS person_name,
-            SUM(a.hours_per_week) AS active_hours_per_week
+            SUM(CASE WHEN pr.status = 'active' THEN a.hours_per_week ELSE 0 END)
+                AS active_hours_per_week
         FROM people p
-        JOIN assignments a ON a.person_id = p.person_id
-        JOIN projects pr ON pr.project_id = a.project_id AND pr.status = 'active'
+        LEFT JOIN assignments a ON a.person_id = p.person_id
+        LEFT JOIN projects pr ON pr.project_id = a.project_id
         GROUP BY p.person_id, person_name
-        ORDER BY active_hours_per_week DESC
+        ORDER BY active_hours_per_week DESC, p.person_id
     """)
-    return
+    active_hours
+    return (active_hours,)
 
 
 @app.cell
-def _(ask):
-    # Same logic, filtered down to just the overloaded few.
-    ask("""
-        SELECT
-            p.person_id,
-            p.first_name || ' ' || p.last_name AS person_name,
-            SUM(a.hours_per_week) AS active_hours_per_week
-        FROM people p
-        JOIN assignments a ON a.person_id = p.person_id
-        JOIN projects pr ON pr.project_id = a.project_id AND pr.status = 'active'
-        GROUP BY p.person_id, person_name
-        HAVING SUM(a.hours_per_week) > 40
-        ORDER BY active_hours_per_week DESC
-    """)
+def _(active_hours, pl):
+    active_hours.filter(pl.col("active_hours_per_week") > 40)
     return
 
 
 @app.cell
 def _(mo):
     mo.md(r"""
-    19 people are committed to at least one active project; **6 of them
-    are over 40 hours a week** when you add up all of their active
+    Of 25 people, 19 have active project commitments and six have zero
+    active hours. **Six people are over 40 hours a week** when you add up all of their active
     commitments: Harper Chen (83), Ethan Wright (82), Ethan Cox (58),
     Matthew Lee (50), Henry Cooper (47), and Isabella Rivera (45). Each
     individual assignment still respects the 40-hour/project cap from
@@ -205,7 +182,7 @@ def _(AS_OF, ask):
         WITH category_totals AS (
             SELECT category, SUM(amount) AS category_total
             FROM expenses
-            WHERE expense_date BETWEEN DATE '{AS_OF}' - INTERVAL '90 days' AND DATE '{AS_OF}'
+            WHERE expense_date BETWEEN DATE '{AS_OF}' - INTERVAL '89 days' AND DATE '{AS_OF}'
             GROUP BY category
         )
         SELECT category, category_total
@@ -219,11 +196,8 @@ def _(AS_OF, ask):
 @app.cell
 def _(mo):
     mo.md(r"""
-    Over the 90 days ending 2026-11-08, the four expense categories
-    totaled: GPU cloud $17,904.44, travel $11,463.73, software
-    $10,329.55, and data labeling $7,685.74 — an average of $11,845.86
-    per category. Only **GPU cloud** comes in above that average; the
-    other three are all below it.
+    From August 11 through November 8, 2026, spending totaled GPU cloud $17,904.44, travel $11,463.73, software $10,329.55, data labeling $7,685.74.
+    Only **GPU cloud** exceeded the average category total of $11,845.86.
     """)
     return
 
@@ -238,14 +212,15 @@ def _(mo):
 
 @app.cell
 def _(ask):
-    ask("""
+    zero_expense_projects = ask("""
         SELECT pr.project_id, pr.name, pr.status
         FROM projects pr
         LEFT JOIN expenses e ON e.project_id = pr.project_id
         WHERE e.expense_id IS NULL
         ORDER BY pr.project_id
     """)
-    return
+    zero_expense_projects
+    return (zero_expense_projects,)
 
 
 @app.cell
@@ -278,7 +253,7 @@ def _(ask):
     # tasks and 3 expenses would produce 15 joined rows, and summing
     # amount or counting tasks straight off that join would overcount
     # both. Pre-aggregating first avoids it.
-    ask("""
+    project_totals = ask("""
         WITH task_counts AS (
             SELECT project_id, count(*) AS n_tasks
             FROM tasks
@@ -299,7 +274,8 @@ def _(ask):
         LEFT JOIN expense_totals et ON et.project_id = pr.project_id
         ORDER BY pr.project_id
     """)
-    return
+    project_totals
+    return (project_totals,)
 
 
 @app.cell
@@ -490,9 +466,8 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 10. (my own question) Which clients has BabsonAI Labs done the most total project budget with?
+    ## 10. (my own question) Which clients have the largest total project budgets?
 
-    **YOUR TURN:** same as above — keep or swap for your own.
     """)
     return
 
@@ -531,99 +506,46 @@ def _(mo):
     mo.md(r"""
     # How I Know These Numbers Are Right
 
-    Two checks below, each reaching a number a second way and comparing
-    it in code with `assert` — so if a later edit broke the real query
-    (say, by joining tasks and expenses directly to projects in Q6
-    instead of pre-aggregating first), the check itself would fail, not
-    just quietly agree.
+    Q6 compares each displayed project's task count and expense total
+    with separate counts and sums from the source tables. Q5 checks
+    its displayed count by subtracting the number of projects that
+    incurred expenses from the total number of projects.
     """)
     return
 
 
 @app.cell
-def _(ask):
-    # Check 1: Q6's per-project task counts, reached a second way.
-    # If Q6 were rewritten as a naive 3-table join (projects x tasks x
-    # expenses, no pre-aggregation), this sum would come out *larger*
-    # than 280, because every task row would be repeated once per
-    # expense row on the same project -- so this assert would catch
-    # exactly the fan-out bug the comment on Q6 warns about.
-    _q6 = ask("""
-        WITH task_counts AS (
-            SELECT project_id, count(*) AS n_tasks FROM tasks GROUP BY project_id
-        )
-        SELECT pr.project_id, COALESCE(tc.n_tasks, 0) AS n_tasks
-        FROM projects pr
-        LEFT JOIN task_counts tc ON tc.project_id = pr.project_id
+def _(ask, project_totals):
+    _expected = ask("""
+        SELECT project_id,
+            (SELECT count(*) FROM tasks
+             WHERE tasks.project_id = projects.project_id) AS n_tasks,
+            COALESCE((SELECT SUM(amount) FROM expenses
+                      WHERE expenses.project_id = projects.project_id), 0) AS total_expenses
+        FROM projects
+        ORDER BY project_id
     """)
-    _direct_count = ask("SELECT count(*) AS n FROM tasks")
-
-    _sum_from_q6 = int(_q6["n_tasks"].sum())
-    _plain_count = int(_direct_count["n"][0])
-    assert _sum_from_q6 == _plain_count, f"MISMATCH: {_sum_from_q6} (from Q6) != {_plain_count} (plain count)"
-    check_1 = f"Q6's per-project task counts sum to {_sum_from_q6}; a plain count(*) on tasks gives {_plain_count}. Match: {_sum_from_q6 == _plain_count}."
-    check_1
-    return
-
-
-@app.cell
-def _(ask):
-    # Check 2: Q5's "zero-expense projects" count, reached a second way --
-    # total projects minus the number of *distinct* projects that appear
-    # in expenses at all, computed with no reference to Q5's own query.
-    _q5 = ask("""
-        SELECT pr.project_id FROM projects pr
-        LEFT JOIN expenses e ON e.project_id = pr.project_id
-        WHERE e.expense_id IS NULL
-    """)
-    _totals = ask("""
-        SELECT
-            (SELECT count(*) FROM projects) AS n_projects,
-            (SELECT count(DISTINCT project_id) FROM expenses) AS n_with_expenses
-    """)
-    _n_projects = int(_totals["n_projects"][0])
-    _n_with_expenses = int(_totals["n_with_expenses"][0])
-    _expected_zero = _n_projects - _n_with_expenses
-
-    assert len(_q5) == _expected_zero, f"MISMATCH: {len(_q5)} (from Q5) != {_expected_zero} (independent count)"
-    check_2 = (
-        f"Q5 found {len(_q5)} project(s) with zero expenses. Independently: "
-        f"{_n_projects} total projects minus {_n_with_expenses} distinct projects "
-        f"that appear at all in expenses = {_expected_zero}. Match: {len(_q5) == _expected_zero}."
+    _actual = project_totals.select("project_id", "n_tasks", "total_expenses").sort("project_id")
+    assert _actual.rows() == _expected.rows(), "Q6 differs from the independent per-project counts or sums."
+    mo_check_q6 = (
+        f"Q6 and the independent queries agree for all {len(_expected)} projects. "
+        f"Tasks: {_actual['n_tasks'].sum()} vs. {_expected['n_tasks'].sum()}. "
+        f"Expenses: ${_actual['total_expenses'].sum():,.2f} vs. ${_expected['total_expenses'].sum():,.2f}."
     )
-    check_2
+    mo_check_q6
     return
 
 
 @app.cell
-def _(mo):
-    mo.md(r"""
-    A third, informal check: Q7's two rule-breaking tasks (task_id 1 and
-    2, for the two reasons listed) match exactly what `make_data.py`
-    itself prints under "Rows that break the 'assignee works on project'
-    rule on purpose" when you run `python3 make_data.py` from a terminal —
-    the two rows the data was deliberately built to contain are the same
-    two rows this notebook's query actually finds.
-
-    Check 1 works for the same underlying reason: it compares Q6's
-    per-project task counts against a plain count(*) FROM tasks with no
-    joins at all, so a join-based bug in Q6 (like the fan-out the code
-    comment warns about) couldn't also appear in a query that never
-    joins anything.
-
-    Check 2 works the same way, checking the numbers on Q5's
-    zero-expense projects with simple math. Q5 finds zero-expense
-    projects with a LEFT JOIN ... WHERE expense_id IS NULL. I check the
-    numbers by computing "total projects minus the number of distinct
-    projects that appear anywhere in expenses," using subtraction and no
-    join at all. This protects against a potential bug in this kind of
-    query: writing JOIN instead of LEFT JOIN, which would make
-    zero-expense projects disappear instead of showing up. That mistake
-    would create an error in Q5's result but couldn't impact the
-    subtraction-based check, since it isn't built the same way, so the
-    two would stop agreeing exactly when that bug was introduced. This
-    successfully checks the numbers.
-    """)
+def _(ask, zero_expense_projects):
+    _expected = ask("""
+        SELECT (SELECT count(*) FROM projects)
+             - (SELECT count(DISTINCT project_id) FROM expenses) AS n
+    """)["n"][0]
+    _actual = len(zero_expense_projects)
+    assert _actual == _expected, f"Q5 found {_actual} projects, but the independent count gives {_expected}."
+    mo_check_q5 = f"Q5 found {_actual} projects without expenses. The independent count gives {_expected}."
+    mo_check_q5
     return
 
 
@@ -649,8 +571,7 @@ def _(mo):
     on that fragile mechanism at all and never needed SQL in the first
     place for a single-table group-by this simple. I only caught this
     because I actually ran the notebook end to end rather than trusting
-    that commented, plausible-looking code would work -- it hadn't
-    actually been executed before that.
+    that the code would work. The fix is in commit `27d69c1`.
     """)
     return
 
@@ -660,26 +581,7 @@ def _(mo):
     mo.md(r"""
     # Reading It Back
 
-    **YOUR TURN — do this part yourself, in this order:**
-
-    1. Pick one question above that uses three tables or more (Q2, Q6,
-       Q7, and Q8 all qualify).
-    2. In a new cell right below this one, write your prediction: how
-       many rows do you expect that question's joins to produce *before*
-       any `GROUP BY` or `WHERE` filtering collapses or trims them, and
-       why? Reason it out from the row counts in build.py's "Row Counts"
-       section (25 people, 14 projects, 57 assignments, 280 tasks, 170
-       expenses) and how the join actually connects those tables.
-    3. Save and commit that prediction *by itself* — `git commit -m "db:
-       prediction"` — before you go any further.
-    4. Only after that commit, add another cell that runs just the raw
-       joins (no `GROUP BY`, no aggregation — e.g. for Q8 that's `SELECT
-       count(*) FROM people m JOIN people r ON r.manager_id = m.person_id
-       LEFT JOIN assignments a ON a.person_id = r.person_id`) and counts
-       the rows with `count(*)`.
-    5. Write whether your prediction matched, and why (or why not).
-    6. Write, in your own words, what one row of that question's *final*
-       (grouped) result means.
+    Question 8 counts direct reports and sums their assigned project hours.
     """)
     return
 
@@ -765,16 +667,16 @@ def _(AS_OF, ask, plt):
     _cats = ask(f"""
         SELECT category, SUM(amount) AS category_total
         FROM expenses
-        WHERE expense_date BETWEEN DATE '{AS_OF}' - INTERVAL '90 days' AND DATE '{AS_OF}'
+        WHERE expense_date BETWEEN DATE '{AS_OF}' - INTERVAL '89 days' AND DATE '{AS_OF}'
         GROUP BY category
         ORDER BY category_total DESC
     """)
-    fig, ax = plt.subplots()
-    ax.bar(_cats["category"].to_list(), _cats["category_total"].to_list(), color="#55A868")
-    ax.set_xlabel("Expense category")
-    ax.set_ylabel("Total spent, last 90 days ($)")
-    ax.set_title("Expenses by category, last 90 days")
-    fig
+    _fig, _ax = plt.subplots()
+    _ax.bar(_cats["category"].to_list(), _cats["category_total"].to_list(), color="#55A868")
+    _ax.set_xlabel("Expense category")
+    _ax.set_ylabel("Total spent, last 90 days ($)")
+    _ax.set_title("Expenses by category, last 90 days")
+    _fig
     return
 
 
@@ -805,12 +707,12 @@ def _(AS_OF, ask, plt):
         FROM task_stats ts
         LEFT JOIN hours_committed hc ON hc.person_id = ts.assigned_to
     """)
-    fig, ax = plt.subplots()
-    ax.scatter(_scatter["total_hours"].to_list(), _scatter["pct_on_time"].to_list(), color="#C44E52")
-    ax.set_xlabel("Total hours committed per week, across all projects")
-    ax.set_ylabel("On-time task completion rate (%)")
-    ax.set_title("Workload vs. on-time rate (employees with 5+ tasks due)")
-    fig
+    _fig, _ax = plt.subplots()
+    _ax.scatter(_scatter["total_hours"].to_list(), _scatter["pct_on_time"].to_list(), color="#C44E52")
+    _ax.set_xlabel("Total hours committed per week, across all projects")
+    _ax.set_ylabel("On-time task completion rate (%)")
+    _ax.set_title("Workload vs. on-time rate (employees with 5+ tasks due)")
+    _fig
     return
 
 
@@ -847,19 +749,12 @@ def _(AS_OF, ask):
 @app.cell
 def _(mo):
     mo.md(r"""
-    Across these 15 employees, total hours committed barely correlates
-    with on-time rate at all (r = 0.125, about as close to "no linear
-    relationship" as real data gets) -- so workload, measured properly,
-    doesn't explain who hits deadlines either. If anything the pattern
-    runs the opposite of what you might expect: Lily Patel has the
-    *fewest* hours committed of anyone in this group (22/week) and the
-    *worst* on-time rate (30.4%), while Harper Chen has the *most* hours
-    committed (108/week) but only a middling rate (55.6%). Henry Brown,
-    the best performer company-wide (90.0%), sits in the middle of the
-    pack on hours (55/week) -- not noticeably lighter-loaded than anyone
-    else. Combined with question 9's finding that no project-count level
-    stands out as worse, the honest conclusion is that this data doesn't
-    show workload driving reliability in either direction.
+    Among the 15 employees with at least five tasks due, committed
+    hours and on-time completion had a weak positive correlation
+    (r = 0.125). Harper Chen had the most committed hours (108 per
+    week) and completed 55.6% of due tasks on time. Henry Brown had the
+    highest on-time rate (90.0%) at 55 committed hours per week. The
+    generated data gives little evidence of a linear relationship.
     """)
     return
 
@@ -868,9 +763,6 @@ def _(mo):
 def _(mo):
     mo.md(r"""
     # Time Spent
-
-    **YOUR TURN:** not graded — just put a single number here (hours
-    spent on this project outside class).
     """)
     return
 
