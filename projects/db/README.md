@@ -83,3 +83,11 @@ erDiagram
 - One row of **expenses** represents one dated expense against one project.
 
 # Design Choices
+
+**The key I chose where the business already had one.** `person_id` is the primary key for people, not `work_email`, even though the business already uses work email as an identifier. Work emails change whenever somebody changes title, so they aren't stable — every task, assignment, and expense tied to that person would become ambiguous the moment their title changed. An invented `person_id` stays constant for as long as the person works here, so `work_email` is kept as a plain attribute instead.
+
+**Which relationships are optional.** `people.manager_id` is optional because the two founders report to nobody, and `tasks.assigned_to` is optional because a new task may be unassigned. Both are nullable foreign keys for exactly that reason.
+
+**The rule my tables can't hold.** A task is assigned only to somebody who works on its project, and never before that person's start date. A `CHECK` only ever sees one row of one table, but this rule has to compare `tasks` against `assignments` and `people` — so it can't be written as a `CHECK`. Business question 7 checks it instead, with a query that joins all three tables and lists any task that breaks it.
+
+**One thing I checked in the design.** I pushed back on the `assignments` table having both `person_id` and `project_id` marked PK and FK at the same time — it looked like a contradiction at first. I understand now that the two columns *together* form the composite primary key of `assignments` (so no person/project pair can be staffed twice), while each column *individually* is also a foreign key back to its own table (`people` or `projects`) — the standard way to model a many-to-many relationship that carries its own facts (role, hours, date joined) on each pairing.
