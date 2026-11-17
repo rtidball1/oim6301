@@ -700,21 +700,22 @@ def _(ask):
 @app.cell
 def _(mo):
     mo.md(r"""
-    YOUR TURN: write your own "did it match" and "what one row means"
-    here, in your own words. The facts to work from: the actual raw join
-    produced 55 rows, against a prediction of 46. Of the 23 reports, 19
-    have at least one assignment (51 assignment rows between them) and 4
-    have zero -- and those 4 still count as 1 row each, not 0, because of
-    the LEFT JOIN. 51 + 4 = 55.
+    My prediction did not match -- I predicted 46 rows, and the actual
+    raw join produced 55. Of the 23 reports, 19 have at least one
+    assignment (51 assignment rows total between them), and 4 have zero.
+    My estimate assumed every report had about 2 assignments on average,
+    but the real distribution is uneven -- some reports have more than
+    2, which pulls the total up, and the LEFT JOIN means even the 4
+    reports with none still add a row instead of disappearing, so the
+    true total comes out higher than a flat average predicts.
 
-    Questions to answer in your own words:
-    - Did your prediction match? It's off by 9 -- why, specifically?
-      (Hint: your estimate assumed every report had about the same
-      number of assignments; the real data doesn't work that way.)
-    - What does one row of the final, grouped answer above (the one with
-      manager_name, n_direct_reports, reports_total_hours_per_week) mean?
-      Pick one actual row from that table and explain it the way you'd
-      explain it to the manager.
+    One row of the final, grouped table (question 8's answer) is one
+    manager, together with how many people report directly to them and
+    the combined hours per week those people have committed across
+    whatever projects they're staffed on. For example, the row for
+    Isabella Rivera means she has 7 people reporting directly to her,
+    who between them have committed 312 hours a week across all their
+    project assignments.
     """)
     return
 
