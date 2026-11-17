@@ -61,12 +61,11 @@ def _(duckdb, mo):
     return (ask,)
 
 
-# ============================================================================
-# Q1 — Each project's expenses against its budget
-# ============================================================================
 @app.cell
 def _(mo):
-    mo.md(r"""## 1. How is each project's spending tracking against its budget?""")
+    mo.md(r"""
+    ## 1. How is each project's spending tracking against its budget?
+    """)
     return
 
 
@@ -91,12 +90,11 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Q2 — Overdue, incomplete tasks (3+ tables: tasks, projects, people)
-# ============================================================================
 @app.cell
 def _(mo):
-    mo.md(r"""## 2. Which tasks are past their due date and still not done?""")
+    mo.md(r"""
+    ## 2. Which tasks are past their due date and still not done?
+    """)
     return
 
 
@@ -133,12 +131,11 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Q3 — Hours/week across active projects, and who's over 40
-# ============================================================================
 @app.cell
 def _(mo):
-    mo.md(r"""## 3. How many hours a week is each person committed to across active projects, and who's over 40?""")
+    mo.md(r"""
+    ## 3. How many hours a week is each person committed to across active projects, and who's over 40?
+    """)
     return
 
 
@@ -190,12 +187,11 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Q4 — Expense categories, last 90 days, above the average category total
-# ============================================================================
 @app.cell
 def _(mo):
-    mo.md(r"""## 4. Which expense categories, over the last 90 days, are costing more than the average category?""")
+    mo.md(r"""
+    ## 4. Which expense categories, over the last 90 days, are costing more than the average category?
+    """)
     return
 
 
@@ -232,12 +228,11 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Q5 — Projects with no expenses at all
-# ============================================================================
 @app.cell
 def _(mo):
-    mo.md(r"""## 5. Which projects have no expenses at all?""")
+    mo.md(r"""
+    ## 5. Which projects have no expenses at all?
+    """)
     return
 
 
@@ -267,12 +262,11 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Q6 — Tasks + expenses per project, fan-out-safe (3+ tables)
-# ============================================================================
 @app.cell
 def _(mo):
-    mo.md(r"""## 6. For each project, how many tasks does it have and how much has it spent in total?""")
+    mo.md(r"""
+    ## 6. For each project, how many tasks does it have and how much has it spent in total?
+    """)
     return
 
 
@@ -322,12 +316,11 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Q7 — Rule check: assignee must work on the task's project (checks a rule)
-# ============================================================================
 @app.cell
 def _(mo):
-    mo.md(r"""## 7. Which tasks are assigned to someone who doesn't actually work on that project (or started after the task was created)?""")
+    mo.md(r"""
+    ## 7. Which tasks are assigned to someone who doesn't actually work on that project (or started after the task was created)?
+    """)
     return
 
 
@@ -379,12 +372,11 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Q8 — Per-manager direct reports + reports' total hours (3+ tables)
-# ============================================================================
 @app.cell
 def _(mo):
-    mo.md(r"""## 8. For each manager, how many people report to them directly, and how many hours a week have those people committed in total?""")
+    mo.md(r"""
+    ## 8. For each manager, how many people report to them directly, and how many hours a week have those people committed in total?
+    """)
     return
 
 
@@ -426,17 +418,10 @@ def _(mo):
     return
 
 
-# ============================================================================
-# OWN QUESTION 1 — on-time completion rate by month (YOUR TURN: keep or swap)
-# ============================================================================
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 9. (my own question) Month by month, is BabsonAI Labs hitting its task deadlines more or less often over time?
-
-    **YOUR TURN:** this is a placeholder — keep it if it's a question you'd
-    actually ask, or swap in your own (just make sure it doesn't reuse the
-    logic of any question above).
+    ## 9. (my own question) Which employees most consistently hit their task deadlines, and does that hold up regardless of how many projects they're on?
     """)
     return
 
@@ -445,20 +430,38 @@ def _(mo):
 def _(AS_OF, ask):
     # "On time" = completed_date IS NOT NULL and on or before due_date.
     # Restricted to due_date <= AS_OF so a task not yet due isn't counted
-    # as a miss just because it happens to be incomplete today.
+    # as a miss just because it happens to be incomplete today. The
+    # HAVING count(*) >= 5 excludes anyone whose percentage would be
+    # computed from too few tasks to mean anything -- without it, a
+    # person with just 1 task due shows up at a literal 0% or 100%,
+    # which looks dramatic but isn't a real signal.
     ask(f"""
+        WITH task_stats AS (
+            SELECT
+                assigned_to,
+                count(*) AS n_tasks_due,
+                SUM(CASE WHEN completed_date IS NOT NULL AND completed_date <= due_date THEN 1 ELSE 0 END) AS n_on_time
+            FROM tasks
+            WHERE assigned_to IS NOT NULL
+              AND due_date <= DATE '{AS_OF}'
+            GROUP BY assigned_to
+            HAVING count(*) >= 5
+        ),
+        project_counts AS (
+            SELECT person_id, count(*) AS n_projects
+            FROM assignments
+            GROUP BY person_id
+        )
         SELECT
-            date_trunc('month', due_date) AS due_month,
-            count(*) AS n_tasks_due,
-            SUM(CASE WHEN completed_date IS NOT NULL AND completed_date <= due_date THEN 1 ELSE 0 END) AS n_on_time,
-            ROUND(
-                100.0 * SUM(CASE WHEN completed_date IS NOT NULL AND completed_date <= due_date THEN 1 ELSE 0 END)
-                / count(*), 1
-            ) AS pct_on_time
-        FROM tasks
-        WHERE due_date <= DATE '{AS_OF}'
-        GROUP BY due_month
-        ORDER BY due_month
+            COALESCE(pc.n_projects, 0) AS n_projects,
+            p.first_name || ' ' || p.last_name AS employee_name,
+            ts.n_tasks_due,
+            ts.n_on_time,
+            ROUND(100.0 * ts.n_on_time / ts.n_tasks_due, 1) AS pct_on_time
+        FROM task_stats ts
+        JOIN people p ON p.person_id = ts.assigned_to
+        LEFT JOIN project_counts pc ON pc.person_id = ts.assigned_to
+        ORDER BY n_projects, pct_on_time DESC
     """)
     return
 
@@ -466,20 +469,24 @@ def _(AS_OF, ask):
 @app.cell
 def _(mo):
     mo.md(r"""
-    The on-time rate bounces around a lot in the earliest months (small
-    sample sizes — as few as 1-3 tasks due), but across the last six
-    months with real volume (2026-06 through 2026-11, 17-42 tasks due per
-    month) it holds fairly steady in the low-to-mid 40s through low 60s
-    percent, with no clear upward or downward trend — BabsonAI Labs
-    doesn't appear to be getting meaningfully better or worse at hitting
-    deadlines over the course of this year.
+    Filtering to the 15 employees with at least 5 tasks due (5 of the 20
+    people with any task at all drop out here, since their percentages
+    were based on just 1-4 tasks -- too thin to be a real signal), the
+    most and least efficient at each project-count level are: at 1
+    project, only Matthew Smith qualifies (75.0%), so there's no
+    comparison to make at that level; at 2 projects, Jack Garcia leads
+    (69.2%) and Lily Patel trails (30.4%); at 3 projects, Henry Brown is
+    the strongest performer company-wide (90.0%) and Henry Cooper the
+    weakest at that level (22.2%); at 4 projects, Emma Cooper leads
+    (72.7%) and Ethan Kim trails (38.5%); and at 5 projects, the heaviest
+    load anyone carries, Matthew Lee (60.0%) and Harper Chen (55.6%) are
+    close together. There's no project-count level where on-time
+    performance collapses -- someone near the company's best rate shows
+    up at nearly every level, including the heaviest one.
     """)
     return
 
 
-# ============================================================================
-# OWN QUESTION 2 — budget by client (YOUR TURN: keep or swap)
-# ============================================================================
 @app.cell
 def _(mo):
     mo.md(r"""
@@ -519,9 +526,6 @@ def _(mo):
     return
 
 
-# ============================================================================
-# How I Know These Numbers Are Right
-# ============================================================================
 @app.cell
 def _(mo):
     mo.md(r"""
@@ -608,9 +612,6 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Working With the Agent
-# ============================================================================
 @app.cell
 def _(mo):
     mo.md(r"""
@@ -639,9 +640,6 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Reading It Back
-# ============================================================================
 @app.cell
 def _(mo):
     mo.md(r"""
@@ -722,21 +720,27 @@ def _(mo):
     return
 
 
-# ============================================================================
-# Going Further
-# ============================================================================
 @app.cell
 def _(mo):
     mo.md(r"""
     # Going Further
 
-    Charted one answer: Q4's last-90-day expense totals by category, so
-    the "GPU cloud is above average" finding is visible at a glance, not
-    just a number in a table.
+    Two directions past the 10 questions.
 
-    **YOUR TURN:** if you try something past this (a dropdown control, the
-    plain-English-to-SQL tool, swapping in real data for one table), add
-    it below and describe what you found here.
+    First, charted one answer: Q4's last-90-day expense totals by
+    category, so the "GPU cloud is above average" finding is visible at
+    a glance, not just a number in a table.
+
+    Second, question 9 asked whether on-time performance holds up
+    regardless of how many projects someone is on, broken into buckets
+    of 1 through 5 projects. Project count is a coarse stand-in for
+    workload, though -- someone on 5 small projects can be far less
+    stretched than someone on 2 big ones. `assignments.hours_per_week`
+    is a more direct measure of how busy someone actually is, so below,
+    for the same 15 employees with at least 5 tasks due, is a scatter of
+    total hours committed per week against on-time rate, plus the actual
+    correlation between them, computed with DuckDB's own corr()
+    aggregate rather than eyeballed from the chart.
     """)
     return
 
@@ -759,9 +763,92 @@ def _(AS_OF, ask, plt):
     return
 
 
-# ============================================================================
-# Time Spent
-# ============================================================================
+@app.cell
+def _(AS_OF, ask, plt):
+    # Same HAVING count(*) >= 5 filter as question 9, so this compares
+    # the same 15 employees, not a noisier, larger group.
+    _scatter = ask(f"""
+        WITH task_stats AS (
+            SELECT
+                assigned_to,
+                count(*) AS n_tasks_due,
+                SUM(CASE WHEN completed_date IS NOT NULL AND completed_date <= due_date THEN 1 ELSE 0 END) AS n_on_time
+            FROM tasks
+            WHERE assigned_to IS NOT NULL
+              AND due_date <= DATE '{AS_OF}'
+            GROUP BY assigned_to
+            HAVING count(*) >= 5
+        ),
+        hours_committed AS (
+            SELECT person_id, SUM(hours_per_week) AS total_hours
+            FROM assignments
+            GROUP BY person_id
+        )
+        SELECT
+            COALESCE(hc.total_hours, 0) AS total_hours,
+            ROUND(100.0 * ts.n_on_time / ts.n_tasks_due, 1) AS pct_on_time
+        FROM task_stats ts
+        LEFT JOIN hours_committed hc ON hc.person_id = ts.assigned_to
+    """)
+    fig, ax = plt.subplots()
+    ax.scatter(_scatter["total_hours"].to_list(), _scatter["pct_on_time"].to_list(), color="#C44E52")
+    ax.set_xlabel("Total hours committed per week, across all projects")
+    ax.set_ylabel("On-time task completion rate (%)")
+    ax.set_title("Workload vs. on-time rate (employees with 5+ tasks due)")
+    fig
+    return
+
+
+@app.cell
+def _(AS_OF, ask):
+    # The actual correlation, computed in SQL rather than eyeballed --
+    # this is the number the chart above is a picture of.
+    ask(f"""
+        WITH task_stats AS (
+            SELECT
+                assigned_to,
+                count(*) AS n_tasks_due,
+                SUM(CASE WHEN completed_date IS NOT NULL AND completed_date <= due_date THEN 1 ELSE 0 END) AS n_on_time
+            FROM tasks
+            WHERE assigned_to IS NOT NULL
+              AND due_date <= DATE '{AS_OF}'
+            GROUP BY assigned_to
+            HAVING count(*) >= 5
+        ),
+        hours_committed AS (
+            SELECT person_id, SUM(hours_per_week) AS total_hours
+            FROM assignments
+            GROUP BY person_id
+        )
+        SELECT
+            count(*) AS n_people,
+            ROUND(corr(hc.total_hours, ts.n_on_time * 100.0 / ts.n_tasks_due), 3) AS correlation
+        FROM task_stats ts
+        JOIN hours_committed hc ON hc.person_id = ts.assigned_to
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    Across these 15 employees, total hours committed barely correlates
+    with on-time rate at all (r = 0.125, about as close to "no linear
+    relationship" as real data gets) -- so workload, measured properly,
+    doesn't explain who hits deadlines either. If anything the pattern
+    runs the opposite of what you might expect: Lily Patel has the
+    *fewest* hours committed of anyone in this group (22/week) and the
+    *worst* on-time rate (30.4%), while Harper Chen has the *most* hours
+    committed (108/week) but only a middling rate (55.6%). Henry Brown,
+    the best performer company-wide (90.0%), sits in the middle of the
+    pack on hours (55/week) -- not noticeably lighter-loaded than anyone
+    else. Combined with question 9's finding that no project-count level
+    stands out as worse, the honest conclusion is that this data doesn't
+    show workload driving reliability in either direction.
+    """)
+    return
+
+
 @app.cell
 def _(mo):
     mo.md(r"""
