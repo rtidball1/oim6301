@@ -605,9 +605,24 @@ def _(mo):
     the two rows the data was deliberately built to contain are the same
     two rows this notebook's query actually finds.
 
-    **YOUR TURN:** write a sentence or two here, in your own words, about
-    what these two checks show and why they'd actually catch a wrong
-    answer (not just confirm a right one).
+    Check 1 works for the same underlying reason: it compares Q6's
+    per-project task counts against a plain count(*) FROM tasks with no
+    joins at all, so a join-based bug in Q6 (like the fan-out the code
+    comment warns about) couldn't also appear in a query that never
+    joins anything.
+
+    Check 2 works the same way, checking the numbers on Q5's
+    zero-expense projects with simple math. Q5 finds zero-expense
+    projects with a LEFT JOIN ... WHERE expense_id IS NULL. I check the
+    numbers by computing "total projects minus the number of distinct
+    projects that appear anywhere in expenses," using subtraction and no
+    join at all. This protects against a potential bug in this kind of
+    query: writing JOIN instead of LEFT JOIN, which would make
+    zero-expense projects disappear instead of showing up. That mistake
+    would create an error in Q5's result but couldn't impact the
+    subtraction-based check, since it isn't built the same way, so the
+    two would stop agreeing exactly when that bug was introduced. This
+    successfully checks the numbers.
     """)
     return
 
