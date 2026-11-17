@@ -616,23 +616,25 @@ def _(mo):
     mo.md(r"""
     # Working With the Agent
 
-    **YOUR TURN — draft below, personalize it or replace it with something
-    truer to what actually happened for you:**
-
-    One thing I didn't just accept as-is: my agent's first instinct for
-    question 6 (tasks and expenses per project) was to join `projects`,
-    `tasks`, and `expenses` together in one statement and `GROUP BY
-    project_id`. That silently inflates both the task count *and* the
-    expense total for any project with more than one of each — a project
-    with 5 tasks and 3 expenses gets 15 joined rows, so `count(*)` way
-    overcounts tasks and `SUM(amount)` overcounts expenses too. I asked
-    it to explain why, and we rewrote it to pre-aggregate tasks and
-    expenses into their own subqueries first, then `LEFT JOIN` those
-    (already-correct) per-project numbers onto `projects`. I checked it
-    by summing Q6's own per-project numbers and comparing them against a
-    plain `count(*)`/`SUM(amount)` on the whole table with no join at all
-    — see "How I Know These Numbers Are Right," check 1, above, which is
-    exactly that comparison.
+    One thing I didn't just accept as-is: build.py's weekday chart, under
+    "A Look at the Data," originally grouped tasks by day of week using a
+    SQL query through duckdb.sql("... FROM _tasks ..."), relying on
+    DuckDB's trick of auto-detecting a local Python variable that matches
+    a table name by inspecting the calling stack frame. It looked
+    reasonable and was clearly commented, but the first time I actually
+    ran build.py for real in marimo, that cell failed with "Catalog
+    Error: Table with name _tasks does not exist!" marimo renames
+    underscore-prefixed variables internally so different cells can
+    reuse throwaway names like _tasks without colliding with each other,
+    so the actual runtime variable DuckDB's trick was looking for wasn't
+    literally named _tasks anymore, even though the source still read
+    that way. I asked my agent to explain the failure, and we rewrote the
+    cell to do the group-by in plain polars instead, which doesn't depend
+    on that fragile mechanism at all and never needed SQL in the first
+    place for a single-table group-by this simple. I only caught this
+    because I actually ran the notebook end to end rather than trusting
+    that commented, plausible-looking code would work -- it hadn't
+    actually been executed before that.
     """)
     return
 
