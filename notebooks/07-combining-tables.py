@@ -708,6 +708,57 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT c.CustomerID
+        FROM Sales.Customer AS c
+        LEFT JOIN Sales.SalesOrderHeader AS h
+            ON c.CustomerID = h.CustomerID
+        WHERE h.SalesOrderID IS NULL
+    """)
+    return
+
+
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT p.ProductID, p.Name
+        FROM Production.Product AS p
+        LEFT JOIN Sales.SalesOrderDetail AS d
+            ON p.ProductID = d.ProductID
+        WHERE d.ProductID IS NULL
+    """)
+    return
+
+
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT
+            (SELECT COUNT(*)
+             FROM Sales.Customer AS c
+             LEFT JOIN Sales.SalesOrderHeader AS h
+                 ON c.CustomerID = h.CustomerID
+             WHERE h.SalesOrderID IS NULL) AS customers_without_orders,
+
+            (SELECT COUNT(*)
+             FROM Production.Product AS p
+             LEFT JOIN Sales.SalesOrderDetail AS d
+                 ON p.ProductID = d.ProductID
+             WHERE d.ProductID IS NULL) AS products_never_sold
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I used LEFT JOIN and IS NULL to find records without matches in the related tables. The LEFT JOIN keeps all customers or products, including those without orders or sales. The IS NULL condition identifies customers who never placed an order and products that were never sold. The results show 701 customers without orders and 238 products without sales.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
