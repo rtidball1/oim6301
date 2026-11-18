@@ -616,7 +616,7 @@ def _(mo, os, pl):
             return pl.DataFrame(_cursor.fetchall(), schema=_columns, orient="row")
 
     ask_server("SELECT TOP 5 SalesOrderID, OrderDate, Freight FROM Sales.SalesOrderHeader ORDER BY SalesOrderID")
-    return
+    return (ask_server,)
 
 
 @app.cell(hide_code=True)
@@ -639,6 +639,43 @@ def _(mo):
     3. Find the customers in `Sales.Customer` who never placed an order, and the products in `Production.Product` that never sold. *Check yourself: 701 customers and 238 products.*
 
     **Going further.** Answer one question of your own about AdventureWorks that needs three tables, and check it against a total you can get from one of them.
+    """)
+    return
+
+
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT COUNT(*) AS header_count
+        FROM Sales.SalesOrderHeader
+    """)
+    return
+
+
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT COUNT(*) AS detail_count
+        FROM Sales.SalesOrderDetail
+    """)
+    return
+
+
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT COUNT(*) AS joined_count
+        FROM Sales.SalesOrderHeader AS h
+        JOIN Sales.SalesOrderDetail AS d
+            ON h.SalesOrderID = d.SalesOrderID
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The JOIN returns 121,317 rows, the same number as SalesOrderDetail. This is because each order can contain multiple products, but each order detail belongs to exactly one order. When the tables are joined, the order header repeats for each matching order detail. Therefore, the JOIN produces one row per order detail.
     """)
     return
 
