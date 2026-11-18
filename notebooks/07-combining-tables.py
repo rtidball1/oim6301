@@ -216,6 +216,50 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask, towns_database):
+    ask(towns_database, """
+        SELECT t.name, t.county, t.population, c.population AS county_population
+        FROM towns AS t
+        JOIN counties AS c ON t.county = c.name
+        ORDER BY t.population DESC
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The query returns 351 rows, the same number of rows as the towns table. This is because each town belongs to one county, so the JOIN matches each town with exactly one county. Therefore, each town appears once in the results.
+    """)
+    return
+
+
+@app.cell
+def _(ask, towns_database):
+    ask(towns_database, """
+        SELECT
+            t.name,
+            t.county,
+            t.population,
+            c.population AS county_population,
+            ROUND(100.0 * t.population / c.population, 1) AS population_share
+        FROM towns AS t
+        JOIN counties AS c ON t.county = c.name
+        ORDER BY population_share DESC
+        LIMIT 5
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Nantucket's population share is 100% because Nantucket County consists of only one town, Nantucket. Therefore, the town's population equals the county's population, resulting in a 100% share.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -273,6 +317,18 @@ def _(mo):
     *Check yourself: four territories, Columbia, Bentonville, Dallas and Austin.*
 
     **Going further.** List the employees with the number of territories each covers, and check that the counts add up to the rows of `employee_territories`. Then find the same four territories with `WHERE NOT EXISTS (...)`.
+    """)
+    return
+
+
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT t.TerritoryDescription
+        FROM territories AS t
+        LEFT JOIN employee_territories AS et
+            ON t.TerritoryID = et.TerritoryID
+        WHERE et.TerritoryID IS NULL
     """)
     return
 
