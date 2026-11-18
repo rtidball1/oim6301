@@ -510,6 +510,70 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    # Going Further
+    """)
+    return
+
+
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT
+            YEAR(o.OrderDate) AS order_year,
+            c.CategoryName,
+            ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS total_revenue
+        FROM order_details AS od
+        JOIN products AS p ON od.ProductID = p.ProductID
+        JOIN categories AS c ON p.CategoryID = c.CategoryID
+        JOIN orders AS o ON od.OrderID = o.OrderID
+        WHERE o.ShipCountry = 'USA'
+        GROUP BY order_year, c.CategoryName
+        ORDER BY order_year, total_revenue DESC
+    """)
+    return
+
+
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        WITH yearly_revenue AS (
+            SELECT
+                YEAR(o.OrderDate) AS order_year,
+                c.CategoryName,
+                SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS revenue
+            FROM order_details AS od
+            JOIN products AS p ON od.ProductID = p.ProductID
+            JOIN categories AS c ON p.CategoryID = c.CategoryID
+            JOIN orders AS o ON od.OrderID = o.OrderID
+            WHERE o.ShipCountry = 'USA'
+            GROUP BY order_year, c.CategoryName
+        ),
+        growth AS (
+            SELECT
+                order_year,
+                CategoryName,
+                revenue,
+                LAG(revenue) OVER (
+                    PARTITION BY CategoryName
+                    ORDER BY order_year
+                ) AS previous_revenue
+            FROM yearly_revenue
+        )
+        SELECT
+            order_year,
+            CategoryName,
+            ROUND(revenue - previous_revenue, 2) AS revenue_growth
+        FROM growth
+        WHERE previous_revenue IS NOT NULL
+        ORDER BY revenue_growth DESC
+        LIMIT 1
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     # 5. After Class: The Same Joins on a Server
 
     So far every database we have used is a file on your computer. Most companies keep theirs on a server, and you connect to it over the network. Babson runs one with **AdventureWorks**, a bicycle company's sales database, on Microsoft SQL Server. The version of SQL that SQL Server uses is called **T-SQL**. It differs from DuckDB's in small ways: tables are inside schemas, as in `Sales.SalesOrderHeader`, and you write `TOP 5` after `SELECT` where DuckDB writes `LIMIT 5` at the end.
