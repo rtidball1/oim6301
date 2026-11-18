@@ -680,6 +680,34 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT SUM(Freight) AS total_freight
+        FROM Sales.SalesOrderHeader
+    """)
+    return
+
+
+@app.cell
+def _(ask_server):
+    ask_server("""
+        SELECT SUM(h.Freight) AS total_freight
+        FROM Sales.SalesOrderHeader AS h
+        JOIN Sales.SalesOrderDetail AS d
+            ON h.SalesOrderID = d.SalesOrderID
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The total freight increases after the JOIN because each order can have multiple order details. Freight is stored once per order in SalesOrderHeader, but the JOIN repeats that freight amount for every product line within the order. This causes freight to be counted multiple times, inflating the total.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
