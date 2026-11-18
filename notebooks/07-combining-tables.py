@@ -466,6 +466,47 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT
+            c.CategoryName,
+            ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS total_revenue
+        FROM order_details AS od
+        JOIN products AS p
+            ON od.ProductID = p.ProductID
+        JOIN categories AS c
+            ON p.CategoryID = c.CategoryID
+        JOIN orders AS o
+            ON od.OrderID = o.OrderID
+        WHERE o.ShipCountry = 'USA'
+        GROUP BY c.CategoryName
+        ORDER BY total_revenue DESC
+    """)
+    return
+
+
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT
+            ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS usa_total_revenue
+        FROM order_details AS od
+        JOIN orders AS o
+            ON od.OrderID = o.OrderID
+        WHERE o.ShipCountry = 'USA'
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I joined order_details, products, categories, and orders to calculate revenue by product category for orders shipped to the USA. I calculated revenue using UnitPrice * Quantity * (1 - Discount), grouped the results by category, and sorted them from highest to lowest revenue. Beverages had the highest revenue at approximately 13,375,939. I verified that the eight categories sum to 63,856,337.63 before rounding, matching the total USA revenue calculated using only orders and order_details.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
